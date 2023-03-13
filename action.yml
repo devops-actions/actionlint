@@ -29,7 +29,8 @@ runs:
     run: |
       # running version 1.6.22 of rhysd/actionlint
       result=$(docker run -v /home/runner/work/actionlint/actionlint:/repo --workdir /repo rhysd/actionlint@sha256:5f957b2a08d223e48133e1a914ed046bea12e578fe2f6ae4de47fdbe691a2468 -color -format "{{json .}}")
-
+      echo "After the docker run command"
+      echo $result
       echo $result > "actionlint-errors.json"
       echo "Content of actionlint-errors.json file":"
       cat "actionlint-errors.json"
