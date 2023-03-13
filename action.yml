@@ -6,7 +6,7 @@ branding:
 outputs:
   results-file:
     description: "Path to the json results of the linter"
-    value: ${{ steps.run.outputs.results-file }}
+    value: ${{ steps.run.outputs.resultsfile }}
     
 runs:
   using: composite
@@ -31,5 +31,7 @@ runs:
       result=$(docker run -v /home/runner/work/actionlint/actionlint:/repo --workdir /repo rhysd/actionlint@sha256:5f957b2a08d223e48133e1a914ed046bea12e578fe2f6ae4de47fdbe691a2468 -color -format "{{json .}}")
 
       echo $result > "actionlint-errors.json"
-      echo "results-file=actionlint-errors.json" >> $GITHUB_OUTPUT
+      echo "resultsfile=actionlint-errors.json" >> $GITHUB_OUTPUT
       # exit code is the result of the docker call, which matches the actionlinter output code
+      
+      cat $GITHUB_OUTPUT
