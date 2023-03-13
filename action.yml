@@ -1,0 +1,11 @@
+author: Rob Bos
+name: Rhysd actionlint
+description: Check your workflows for common errors, like not declaring outputs before using them, bash script errors, and more!
+branding:
+  icon: tag
+  color: gray-dark
+runs:
+  using: docker
+  image: docker://rhysd/actionlint@sha256:5f957b2a08d223e48133e1a914ed046bea12e578fe2f6ae4de47fdbe691a2468 # 1.6.22
+  args:
+   - -color
