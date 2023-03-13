@@ -22,7 +22,15 @@ runs:
     uses: docker://rhysd/actionlint@sha256:5f957b2a08d223e48133e1a914ed046bea12e578fe2f6ae4de47fdbe691a2468 # 1.6.22
     with:
       args: -color -format "{{json .}}"
+  
+  - name: Docker run    
+    shell: bash
+    id: run2
+    run: |      
+      docker run -v /home/runner/work/actionlint/actionlint:/repo --workdir /repo rhysd/actionlint@sha256:5f957b2a08d223e48133e1a914ed046bea12e578fe2f6ae4de47fdbe691a2468 -color -format "{{json .}}"
       
+      echo "here!"
+  
   - name: Docker run    
     shell: bash
     id: run
@@ -39,3 +47,7 @@ runs:
       
       echo "This is the contents of the GITHUB_OUTPUT file: [$GITHUB_OUTPUT]"
       cat $GITHUB_OUTPUT
+
+  - name: Test
+    shell: bash
+    run: echo "Last one!"
