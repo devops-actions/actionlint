@@ -3,12 +3,17 @@ description: Check your workflows for common errors, like not declaring outputs 
 branding:
   icon: tag
   color: gray-dark
+outputs:
+  results-file:
+    description: "Path to the json results of the linter"
+    value: ${{ steps.run.outputs.results-file }}
+    
 runs:
   using: composite
   steps:
   - name: Add anotation matcher
     run: echo "::add-matcher::actionlint-matcher.json"
-    shell: pwsh
+    shell: bash
     
   - name: Run actionlint
     id: action-lint
@@ -19,10 +24,12 @@ runs:
       args: -color -format "{{json .}}"
       
   - name: Docker run    
-    shell: pwsh
+    shell: bash
+    id: run
     run: |
       # running version 1.6.22 of rhysd/actionlint
       $result = docker run -v /home/runner/work/actionlint/actionlint:/repo --workdir /repo rhysd/actionlint@sha256:5f957b2a08d223e48133e1a914ed046bea12e578fe2f6ae4de47fdbe691a2468 -color -format "{{json .}}" 
 
       Set-Content "actionlint-errors.json" $result
+      echo "results-file=actionlint-errors.json" >> $GITHUB_OUTPUT
       # exit code is the result of the docker call, which matches the actionlinter output code
