@@ -8,7 +8,7 @@ runs:
   using: composite
   steps:
   - name: Add anotation matcher
-    run: echo "::add-matcher::.github/actionlint-matcher.json"
+    run: echo "::add-matcher::actionlint-matcher.json"
     shell: bash
     
   - name: Run actionlint
