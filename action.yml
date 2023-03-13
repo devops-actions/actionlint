@@ -9,7 +9,7 @@ runs:
   steps:
   - name: Add anotation matcher
     run: echo "::add-matcher::actionlint-matcher.json"
-    shell: bash
+    shell: pwsh
     
   - name: Run actionlint
     id: action-lint
@@ -18,5 +18,6 @@ runs:
       args: -color -format "{{json .}}"
 
 
-  - run: |
+  - shell: pwsh
+    run: |
       echo "${{ toJson(steps.action-lint.outputs) }}"
