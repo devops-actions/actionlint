@@ -42,7 +42,7 @@ jobs:
             Write-Host "Filepath:" $item.filepath
             Write-Host "Line:" $item.line
 
-            if ($item.filepath -eq ".github/workflows/test-local-action.yml" -and $item.line -eq 62) {
+            if ($item.filepath -eq ".github/workflows/test-local-action.yml" -and $item.line -eq 63) {
               $found1 = $true
             }
           }      
