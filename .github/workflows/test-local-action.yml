@@ -22,7 +22,7 @@ jobs:
           exit 1
       
       - name: Check for expected errors
-        if: always && steps.action-lint.outcome=='failure'
+        if: always() && steps.action-lint.outcome=='failure'
         run: |
           echo "Todo: check the results of fake-output and fake-secret"
       
