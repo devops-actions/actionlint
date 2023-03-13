@@ -27,8 +27,11 @@ jobs:
       
       - name: Test output file and expected contents
         shell: pwsh
+        env:
+          RESULTFILE: ${{ steps.action-lint.outputs.results-file }}
         run: |
-          $result = Get-Content "actionlint-errors.json"       
+          echo "Results file is [$RESULTFILE]"
+          $result = Get-Content $env:RESULTFILE       
           $items = @(ConvertFrom-Json $result -Depth 10)     
       
           $found1 = $false
@@ -38,7 +41,7 @@ jobs:
             Write-Host "Filepath:" $item.filepath
             Write-Host "Line:" $item.line
 
-            if ($item.filepath -eq ".github/workflows/test-local-action.yml" -and $item.line -eq 59) {
+            if ($item.filepath -eq ".github/workflows/test-local-action.yml" -and $item.line -eq 62) {
               $found1 = $true
             }
           }      
