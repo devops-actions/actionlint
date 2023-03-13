@@ -28,6 +28,7 @@ runs:
     id: run2
     continue-on-error: true
     run: |      
+      echo "here!"
       docker run -v /home/runner/work/actionlint/actionlint:/repo --workdir /repo rhysd/actionlint@sha256:5f957b2a08d223e48133e1a914ed046bea12e578fe2f6ae4de47fdbe691a2468 -color -format "{{json .}}"
       echo $?
       echo "here!"
@@ -38,7 +39,8 @@ runs:
     continue-on-error: true
     run: |
       # running version 1.6.22 of rhysd/actionlint
-      set -o pipefail;      
+      set -o pipefail;
+      echo "here!"
       result=$(docker run -v /home/runner/work/actionlint/actionlint:/repo --workdir /repo rhysd/actionlint@sha256:5f957b2a08d223e48133e1a914ed046bea12e578fe2f6ae4de47fdbe691a2468 -color -format "{{json .}}")
       status=$?
       echo "Loaded status [$status]"
