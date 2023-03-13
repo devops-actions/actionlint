@@ -11,7 +11,6 @@ jobs:
       - name: Run the local action from the checked out branch
         id: action-lint
         uses: ./
-        continue-on-error: true
             
       - name: Check for no reported errors
         if: steps.action-lint.outcome=='success'
