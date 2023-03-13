@@ -9,9 +9,19 @@ jobs:
       - uses: actions/checkout@v3
       
       - name: Run the local action from the checked out branch
+        id: action-lint
         uses: ./
+        continue-on-error: true
+            
+      - name: Check for expected errors
+        if: steps.action-lint.outcome=='success'
+        run: |
+          echo "Error in `action-lint` step, expeced a failure status, but got success"
+          # fail the job so reporting can pick it up
+          return 1
       
       - name: Check for expected errors
+        if: steps.action-lint.outcome=='failure'
         run: |
           echo "Todo: check the results of fake-output and fake-secret"
         
@@ -20,14 +30,12 @@ jobs:
     steps:
      - name: Non existing output
        id: fake-output
-       continue-on-error: true
        run: |
         echo "Let's echo an output that does not exist, should fail the check:"
         echo "Output that does not exist: ${{ needs.test-with-local-action.outputs.fake-output }}"
         
      - name: Non existing secret
        id: fake-secret
-       continue-on-error: true
        run: |
         echo "Let's echo a secret that does not exist, should fail the check:"
         echo "Secret that does not exist: ${{ secrets.fake-secret }}"
