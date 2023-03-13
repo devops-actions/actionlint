@@ -55,7 +55,7 @@ runs:
       echo "After the docker run command"
       echo $result
       echo $result > "actionlint-errors.json"
-      echo "Content of actionlint-errors.json file":"
+      echo "Content of actionlint-errors.json file:"
       cat "actionlint-errors.json"
       echo "resultsfile=actionlint-errors.json" >> $GITHUB_OUTPUT
       # exit code is the result of the docker call, which matches the actionlinter output code
