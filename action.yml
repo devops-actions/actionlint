@@ -42,9 +42,10 @@ runs:
       $items = @(ConvertFrom-Json $result -Depth 10)
       $found1 = $false
       foreach ($item in $items) { 
-        Write-Host $item.message
-        Write-Host $item.filepath
-        Write-Host $item.line
+        Write-Host "Found an error: "
+        Write-Host "Message:" $item.message
+        Write-Host "Filepath:" $item.filepath
+        Write-Host "Line:" $item.line
         
         if ($item.filepath -eq ".github/workflows/test-local-action.yml" -and $item.line -eq 33) {
           $found1 = $true
@@ -54,4 +55,7 @@ runs:
       if (!$found1){
         echo "Error finding the first expected result. Exiting with failure"
         exit 1
+      } 
+      else {
+        Write-Host "Found the expected error succesfully"
       }
