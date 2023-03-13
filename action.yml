@@ -1,0 +1,37 @@
+name: Rhysd actionlint
+description: Check your workflows for common errors, like not declaring outputs before using them, bash script errors, and more!
+branding:
+  icon: tag
+  color: gray-dark
+outputs:
+  results-file:
+    description: "Path to the json results of the linter"
+    value: ${{ steps.run.outputs.resultsfile }}
+    
+runs:
+  using: composite
+  steps:
+  - name: Add anotation matcher
+    run: echo "::add-matcher::actionlint-matcher.json"
+    shell: bash
+  
+  - name: Docker run    
+    shell: bash
+    id: run
+    run: |
+      # running version 1.6.22 of rhysd/actionlint
+      # disable pipefail -e -o that is set on the shell script from the runner to prevent exiting when the docker run command fails
+      set +e +o pipefail;
+      result=$(docker run -v /home/runner/work/actionlint/actionlint:/repo --workdir /repo rhysd/actionlint@sha256:5f957b2a08d223e48133e1a914ed046bea12e578fe2f6ae4de47fdbe691a2468 -color -format "{{json .}}")
+      status=$?
+      #echo "Loaded status [$status]"
+      if [[ $status == 0 ]];
+      then
+        echo "actionlint had no errors"
+      else
+        echo "actionlint found errors"
+      fi
+      echo $result > "actionlint-errors.json"
+      echo "resultsfile=actionlint-errors.json" >> $GITHUB_OUTPUT
+      
+      exit $status
