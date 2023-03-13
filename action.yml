@@ -17,13 +17,6 @@ runs:
     uses: docker://rhysd/actionlint@sha256:5f957b2a08d223e48133e1a914ed046bea12e578fe2f6ae4de47fdbe691a2468 # 1.6.22
     with:
       args: -color -format "{{json .}}"
-
-  - name: Check outputs
-    shell: pwsh
-    run: |
-      echo "${{ toJson(steps.action-lint.outputs) }}"
-      cd ../../_actions/actions/
-      ls -la
       
   - name: Docker run    
     shell: pwsh
@@ -40,6 +33,8 @@ runs:
       $result
       
       $items = @(ConvertFrom-Json $result -Depth 10)
+      Set-Content "actionlint-errors.json" $items
+      
       $found1 = $false
       foreach ($item in $items) { 
         Write-Host "Found an error: "
