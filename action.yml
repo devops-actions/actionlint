@@ -29,13 +29,15 @@ runs:
     shell: pwsh
     run: |
       # running version 1.6.22 of rhysd/actionlint
-      $result = docker run -v /home/runner/work/actionlint/actionlint:/repo --workdir /repo rhysd/actionlint@sha256:5f957b2a08d223e48133e1a914ed046bea12e578fe2f6ae4de47fdbe691a2468
+      $result = docker run -v /home/runner/work/actionlint/actionlint:/repo --workdir /repo rhysd/actionlint@sha256:5f957b2a08d223e48133e1a914ed046bea12e578fe2f6ae4de47fdbe691a2468 -color -format "{{json .}}" 
       
       if ($null -eq $result) {
         # fail the step
         echo "Did not find any errors, double check the workflows. Exiting with failure"
         exit 1
       }
+      echo "Json result:"
+      $result
       
       $items = @(ConvertFrom-Json $result -Depth 10)
       $found1 = $false
