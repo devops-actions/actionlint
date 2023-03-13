@@ -14,7 +14,20 @@ jobs:
   job-with-errors:
     runs-on: ubuntu-latest
     steps:
-     - run: |
+     - name: Non existing output
+       id: fake-output
+       continue-on-error: true
+       run: |
         echo "Let's echo an output that does not exist, should fail the check:"
         echo "Output that does not exist: ${{ needs.test-with-local-action.outputs.fake-output }}"
         
+     - name: Non existing secret
+       id: fake-secret
+       continue-on-error: true
+       run: |
+        echo "Let's echo a secret that does not exist, should fail the check:"
+        echo "Secret that does not exist: ${{ secrets.fake-secret }}"
+        
+     - name: Check for expected errors
+       run: |
+        echo "Todo: check the results of fake-output and fake-secret"
