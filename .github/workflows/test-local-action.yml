@@ -24,6 +24,10 @@ jobs:
         if: steps.action-lint.outcome=='failure'
         run: |
           echo "Todo: check the results of fake-output and fake-secret"
+      
+      - name: Test output file
+        run: |
+          echo "actionlint-errors.json"       
         
   job-with-errors:
     runs-on: ubuntu-latest
