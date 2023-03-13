@@ -1,4 +1,3 @@
-author: Rob Bos
 name: Rhysd actionlint
 description: Check your workflows for common errors, like not declaring outputs before using them, bash script errors, and more!
 branding:
@@ -22,5 +21,14 @@ runs:
     shell: pwsh
     run: |
       echo "${{ toJson(steps.action-lint.outputs) }}"
+      cd ../../_actions/actions/
+      ls -la
+      
+  - name: Docker run    
+    shell: pwsh
+    run: |                                                                     # 1.6.22
+      docker run --rm -v $(pwd):/repo --workdir /repo rhysd/actionlint:@sha256:5f957b2a08d223e48133e1a914ed046bea12e578fe2f6ae4de47fdbe691a2468 -color -format "{{json .}}"
+
+      ls -la
       cd ../../_actions/actions/
       ls -la
