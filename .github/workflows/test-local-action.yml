@@ -1,3 +1,4 @@
+name: Test local action
 on:
   push:
   
@@ -6,5 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: ./
+      
+      - name: Run the local action from the checked out branch
+        uses: ./
         
