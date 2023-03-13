@@ -14,4 +14,4 @@ runs:
   - name: Run actionlint
     uses: docker://rhysd/actionlint@sha256:5f957b2a08d223e48133e1a914ed046bea12e578fe2f6ae4de47fdbe691a2468 # 1.6.22
     with:
-      args:-color
+      args: -color
