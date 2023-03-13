@@ -11,3 +11,10 @@ jobs:
       - name: Run the local action from the checked out branch
         uses: ./
         
+  job-with-errors:
+    runs-on: ubuntu-latest
+    steps:
+     - run: |
+        echo "Let's echo an output that does not exist, should fail the check:"
+        echo "Output that does not exist: ${{ needs.test-with-local-action.outputs.fake-output }}"
+        
