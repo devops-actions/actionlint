@@ -22,6 +22,5 @@ runs:
     shell: pwsh
     run: |
       echo "${{ toJson(steps.action-lint.outputs) }}"
-      ls -la
-      cd ..
+      cd ../../
       ls -la
