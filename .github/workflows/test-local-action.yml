@@ -30,7 +30,7 @@ jobs:
         env:
           RESULTFILE: ${{ steps.action-lint.outputs.results-file }}
         run: |
-          echo "Results file is [$RESULTFILE]"
+          echo "Results file is [$env:RESULTFILE]"
           $result = Get-Content $env:RESULTFILE       
           $items = @(ConvertFrom-Json $result -Depth 10)     
       
