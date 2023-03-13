@@ -17,7 +17,7 @@ runs:
     with:
       args: -color -format "{{json .}}"
 
-
-  - shell: pwsh
+  - name: Check outputs
+    shell: pwsh
     run: |
       echo "${{ toJson(steps.action-lint.outputs) }}"
