@@ -21,8 +21,6 @@ runs:
     continue-on-error: true
     run: |
       # running version 1.6.22 of rhysd/actionlint
-      set pipefail;
-      echo "here!"
       # disable pipefail -e -o that is set on the shell script from the runner to prevent exiting when the docker run command fails
       set +e +o pipefail;
       result=$(docker run -v /home/runner/work/actionlint/actionlint:/repo --workdir /repo rhysd/actionlint@sha256:5f957b2a08d223e48133e1a914ed046bea12e578fe2f6ae4de47fdbe691a2468 -color -format "{{json .}}")
@@ -30,10 +28,11 @@ runs:
       #echo "Loaded status [$status]"
       if [[ $status == 0 ]];
       then
-        echo "docker run command succeeded"
+        echo "actionlint had no errors"
       else
-        echo "docker run command failed"
+        echo "actionlint found errors"
       fi
       echo $result > "actionlint-errors.json"
       echo "resultsfile=actionlint-errors.json" >> $GITHUB_OUTPUT
-      # exit code is the result of the docker call, which matches the actionlinter output code
+      
+      exit $status
