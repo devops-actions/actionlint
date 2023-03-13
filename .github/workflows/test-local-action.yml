@@ -13,12 +13,12 @@ jobs:
         uses: ./
         continue-on-error: true
             
-      - name: Check for expected errors
+      - name: Check for no reported errors
         if: steps.action-lint.outcome=='success'
         run: |
-          echo "Error in `action-lint` step, expeced a failure status, but got success"
+          echo "Error in 'action-lint' step, expeced a failure status, but got success"
           # fail the job so reporting can pick it up
-          return 1
+          exit 1
       
       - name: Check for expected errors
         if: steps.action-lint.outcome=='failure'
