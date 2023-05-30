@@ -1,5 +1,5 @@
 Param (
-    [$string] $resultsFilePath
+    [string] $resultsFilePath
 )
 
 $result = Get-Content $resultsFilePath    
