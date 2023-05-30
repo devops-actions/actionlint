@@ -37,6 +37,7 @@ jobs:
           $items = @(ConvertFrom-Json $result -Depth 10)     
       
           $found1 = $false
+          $found2 = $false
           foreach ($item in $items) { 
             Write-Host "Found an error: "
             Write-Host "Message:" $item.message
@@ -44,7 +45,13 @@ jobs:
             Write-Host "Line:" $item.line
 
             if ($item.filepath -eq ".github/workflows/test-local-action.yml" -and $item.line -eq 65) {
+              if ($item.message -eq "property \"fake-output\" is not defined in object type {}"")
               $found1 = $true
+            }
+
+            if ($item.filepath -eq ".github/workflows/test-local-action.yml" -and $item.line -eq 88) {
+              if ($item.message -eq "property \"test-job\" is not defined in object type {}"")
+              $found2 = $true
             }
           }      
 
@@ -53,7 +60,15 @@ jobs:
             exit 1
           } 
           else {
-            Write-Host "Found the expected error succesfully"
+            Write-Host "Found first the expected error succesfully"
+          }
+
+          if (!$found2){
+            echo "Error finding the second expected result. Exiting with failure"
+            exit 1
+          } 
+          else {
+            Write-Host "Found the second expected error succesfully"
           }
         
   job-with-errors:
@@ -64,10 +79,16 @@ jobs:
        id: fake-output
        run: |
         echo "Let's echo an output that does not exist, should fail the check:"
-        echo "Output that does not exist: ${{ needs.test-local-action.outputs.fake-output }}" # todo: add check with needs keyword that is not defined on the job level
-        
+        echo "Output that does not exist: ${{ needs.test-local-action.outputs.fake-output }}"
+
+     - name: Non existing needs
+       id: fake-needs-setup
+       run: |
+        echo "Let's echo an output that does not exist, should fail the check:"
+        echo "Output that does not exist: ${{ needs.test-job.outputs.fake-output }}" 
+
      - name: Non existing secret
        id: fake-secret
        run: |
-        echo "Let's echo a secret that does not exist, should fail the check:"
+        echo "Let's echo a secret that does not exist, would be nice if this would fail the check:"
         echo "Secret that does not exist: ${{ secrets.fake-secret }}"
