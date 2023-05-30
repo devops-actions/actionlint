@@ -74,8 +74,11 @@ else {
 if ($items.Length -gt 3) {
     Write-Host "Found more errors then the 3 expected. Exiting with failure"
 }
+else {
+    Write-Host "Found an error count of 3"
+}
 
-if (!$found1 -or !$found2 -or !$found3 -or $items.Length -ne 3){
+if (!$found1 -or !$found2 -or !$found3 -or $items.Length -gt 3){
     return 1
 }
 
