@@ -48,6 +48,7 @@ jobs:
               Write-Host "Found first file path and line number"
               if ($item.message -eq 'property \"test-local-action\" is not defined in object type {}') { 
                 $found1 = $true
+                Write-Host "found nr 1"
               }
               else {
                 Write-Host "Expected message not found"
@@ -61,6 +62,7 @@ jobs:
               Write-Host "Found second file path and line number"
               if ($item.message -eq 'property ""test-job"" is not defined in object type {}'){
                 $found2 = $true
+                Write-Host "found nr 2"
               }
             }
              
