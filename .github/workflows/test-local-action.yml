@@ -39,7 +39,7 @@ jobs:
           echo "-------------"
           cat $env:RESULTFILE
           echo "-------------"
-          $result = ./.github/workflows/check-resultsfile.ps1 -resultsFilePath $env:RESULTFILE
+          $result = $(./.github/workflows/check-resultsfile.ps1 -resultsFilePath $env:RESULTFILE)
 
           echo "Status: $($result)"
     
