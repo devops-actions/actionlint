@@ -72,7 +72,7 @@ else {
 }
 
 if (!$found1 -or !$found2 -or !$found3){
-    exit 1
+    return 1
 }
 
-exit 0
+return 0
