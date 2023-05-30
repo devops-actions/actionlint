@@ -46,9 +46,11 @@ jobs:
 
             if ($item.filepath -eq '.github/workflows/workflow-with-errors.yml' -and $item.line -eq 12) {
               Write-Host "Found first file path and line number"
-              if ($item.message -eq 'property ""test-local-action"" is not defined in object type {}') {
+              if ($item.message -eq 'property ""test-local-action"" is not defined in object type {}') { 
                 $found1 = $true
               }
+              else {
+                Write-Host "Expected message not found, got [$item.message] and not [$('.github/workflows/workflow-with-errors.yml')]"}
             }
 
             if ($item.filepath -eq '.github/workflows/workflow-with-errors.yml' -and $item.line -eq 18) {
