@@ -33,4 +33,5 @@ jobs:
      - name: Bash injection
        run: |
         echo "Let's echo a an input value that should fail the check:"
-        echo "User input should not be trusted: ${{ inputs.example-input }}"    
+        echo "User input should not be trusted: ${{ inputs.example-input }}"
+        export UserInput=${{ inputs.example-input }}
