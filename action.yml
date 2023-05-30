@@ -16,7 +16,7 @@ outputs:
 runs:
   using: composite
   steps:
-  - name: Add anotation matcher
+  - name: Add annotation matcher
     run: echo "::add-matcher::actionlint-matcher.json"
     shell: bash
   
