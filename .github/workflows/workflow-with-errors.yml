@@ -1,6 +1,11 @@
 name: Example of errors
 on:
-  workflow_dispatch
+  workflow_dispatch:
+    inputs:
+      example-input:
+        description: 'Example input'
+        required: false
+        default: 'example'
   
 jobs:        
   job-with-errors:
@@ -24,3 +29,8 @@ jobs:
        run: |
         echo "Let's echo a secret that does not exist, would be nice if this would fail the check:"
         echo "Secret that does not exist: ${{ secrets.fake-secret }}"
+
+     - name: Bash injection
+       run: |
+        echo "Let's echo a an input value that should fail the check:"
+        echo "User input should not be trusted: ${{ input.example-input }}"    
