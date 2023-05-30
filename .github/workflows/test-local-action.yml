@@ -17,7 +17,7 @@ jobs:
       - name: Check for no reported errors
         if: steps.action-lint.outcome=='success'
         run: |
-          echo "Error in 'action-lint' step, expeced a failure status, but got success"
+          echo "Error in 'action-lint' step, expected a failure status, but got success"
           # fail the job so reporting can pick it up
           exit 1
       
@@ -58,12 +58,13 @@ jobs:
         
   job-with-errors:
     runs-on: ubuntu-latest
+    needs: test-with-local-action
     steps:
      - name: Non existing output
        id: fake-output
        run: |
         echo "Let's echo an output that does not exist, should fail the check:"
-        echo "Output that does not exist: ${{ needs.test-with-local-action.outputs.fake-output }}"
+        echo "Output that does not exist: ${{ needs.test-with-local-action.outputs.fake-output }}" # todo: add check with needs keyword that is not defined on the job level
         
      - name: Non existing secret
        id: fake-secret
