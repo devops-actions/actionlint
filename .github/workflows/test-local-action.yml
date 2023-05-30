@@ -36,9 +36,6 @@ jobs:
           RESULTFILE: ${{ steps.action-lint.outputs.results-file }}
         run: |
           echo "Results file is [$env:RESULTFILE]"
-          echo "-------------"
-          cat $env:RESULTFILE
-          echo "-------------"
           $result = $(./.github/workflows/check-resultsfile.ps1 -resultsFilePath $env:RESULTFILE)
 
           echo "Status: $($result)"

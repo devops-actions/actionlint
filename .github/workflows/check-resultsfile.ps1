@@ -2,8 +2,20 @@ Param (
     [string] $resultsFilePath
 )
 
-$result = Get-Content $resultsFilePath    
-$items = @(ConvertFrom-Json $result -Depth 10)     
+# check if the file exists
+if (!(Test-Path $resultsFilePath)) {
+    Write-Host "File not found: [$resultsFilePath]"
+    exit 1
+}
+
+$result = Get-Content $resultsFilePath 
+# Check if the content is longer then 0
+if ($result.Length -eq 0) {
+    Write-Host "File is empty: [$resultsFilePath]"
+    exit 1
+}
+
+$items = @(ConvertFrom-Json $result -Depth 10)   
       
 $found1 = $false
 $found2 = $false
