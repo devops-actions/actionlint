@@ -27,6 +27,7 @@ jobs:
           echo "Todo: check the results of fake-output and fake-secret"
 
       - uses: actions/upload-artifact@v3
+        if: always()
         with:
           name: actionlint-results
           path: ${{ steps.action-lint.outputs.results-file }}
