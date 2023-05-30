@@ -15,7 +15,7 @@ foreach ($item in $items) {
 
     if ($item.filepath -eq '.github/workflows/workflow-with-errors.yml' -and $item.line -eq 12) {
         Write-Host "Found first file path and line number"
-        if ($item.message -eq 'property \"test-local-action\" is not defined in object type {}') { 
+        if ($item.message -eq "property ""test-local-action"" is not defined in object type {}") { 
             $found1 = $true
             Write-Host "found nr 1"
         }
