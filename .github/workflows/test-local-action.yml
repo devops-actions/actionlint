@@ -44,14 +44,14 @@ jobs:
             Write-Host "Filepath:" $item.filepath
             Write-Host "Line:" $item.line
 
-            if ($item.filepath -eq '.github/workflows/workflow-with-errors.yml' -and $item.line -eq 14) {
+            if ($item.filepath -eq '.github/workflows/workflow-with-errors.yml' -and $item.line -eq 12) {
               Write-Host "Found first file path and line number"
               if ($item.message -eq 'property ""test-job"" is not defined in object type {test-local-action: {outputs: {}; result: string}}') {
                 $found1 = $true
               }
             }
 
-            if ($item.filepath -eq '.github/workflows/workflow-with-errors.yml' -and $item.line -eq 20) {
+            if ($item.filepath -eq '.github/workflows/workflow-with-errors.yml' -and $item.line -eq 18) {
               Write-Host "Found second file path and line number"
               if ($item.message -eq 'property ""test-job"" is not defined in object type {}'){
                 $found2 = $true
