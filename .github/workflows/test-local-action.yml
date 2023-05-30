@@ -50,7 +50,10 @@ jobs:
                 $found1 = $true
               }
               else {
-                Write-Host "Expected message not found, got [$($item.message)] and not [$('property ""test-local-action"" is not defined in object type {}')]"}
+                Write-Host "Expected message not found"
+                Write-Host "got     [$($item.message)]"
+                Write-Host "Expected [$('property ""test-local-action"" is not defined in object type {}')]"
+              }
             }
 
             if ($item.filepath -eq '.github/workflows/workflow-with-errors.yml' -and $item.line -eq 18) {
