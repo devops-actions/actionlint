@@ -46,7 +46,7 @@ jobs:
 
             if ($item.filepath -eq '.github/workflows/workflow-with-errors.yml' -and $item.line -eq 12) {
               Write-Host "Found first file path and line number"
-              if ($item.message -eq 'property ""test-job"" is not defined in object type {test-local-action: {outputs: {}; result: string}}') {
+              if ($item.message -eq 'property ""test-local-action"" is not defined in object type {}') {
                 $found1 = $true
               }
             }
@@ -57,8 +57,9 @@ jobs:
                 $found2 = $true
               }
             }
-          }      
-
+             
+            Write-Host "----------------------------------------------------------------------------------------------"   
+          }
           if (!$found1){
             echo "Error finding the first expected result. Exiting with failure"
             exit 1
