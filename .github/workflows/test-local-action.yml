@@ -6,6 +6,45 @@ on:
   
 jobs:
   test-local-action:
+    name: Test with normal setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Run the local action from the checked out branch
+        id: action-lint
+        uses: ./
+        continue-on-error: true
+
+      - name: Check for no reported errors
+        if: steps.action-lint.outcome=='success'
+        run: |
+          echo "Error in 'action-lint' step, expected a failure status, but got success"
+          # fail the job so reporting can pick it up
+          exit 1
+
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: actionlint-results
+          path: ${{ steps.action-lint.outputs.results-file }}
+
+      - name: Test output file and expected contents
+        if: always()
+        shell: pwsh
+        env:
+          RESULTFILE: ${{ steps.action-lint.outputs.results-file }}
+        run: |
+          echo "Results file is [$env:RESULTFILE]"
+          echo "-------------"
+          cat $env:RESULTFILE
+          echo "-------------"
+          ./.github/workflows/check-resultsfile.ps1 -resultsFilePath $env:RESULTFILE
+
+          echo "Status: $($_)"
+    
+  test-action-skip-failure:
+    name: Test with skip failure set on the action
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -19,14 +58,12 @@ jobs:
       - name: Check for no reported errors
         if: steps.action-lint.outcome=='success'
         run: |
-          echo "Error in 'action-lint' step, expected a failure status, but got success"
-          # fail the job so reporting can pick it up
-          exit 1
+          echo "Error in 'action-lint' step, expected a success status, which matches expectations"
       
       - name: Check for expected errors
         if: always() && steps.action-lint.outcome=='failure'
         run: |
-          echo "Todo: check the results of fake-output and fake-secret"
+          echo "Failure status was not expected"
 
       - uses: actions/upload-artifact@v3
         if: always()
