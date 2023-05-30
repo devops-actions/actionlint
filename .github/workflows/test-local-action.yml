@@ -39,9 +39,9 @@ jobs:
           echo "-------------"
           cat $env:RESULTFILE
           echo "-------------"
-          ./.github/workflows/check-resultsfile.ps1 -resultsFilePath $env:RESULTFILE
+          $result = ./.github/workflows/check-resultsfile.ps1 -resultsFilePath $env:RESULTFILE
 
-          echo "Status: $($_)"
+          echo "Status: $($result)"
     
   test-action-skip-failure:
     name: Test with skip failure set on the action
