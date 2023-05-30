@@ -53,6 +53,7 @@ jobs:
                 Write-Host "Expected message not found"
                 Write-Host "got      [$($item.message)]"
                 Write-Host "Expected [$('property ""test-local-action"" is not defined in object type {}')]"
+                Write-Host "Expected [$('property \"test-local-action\" is not defined in object type {}')]"
               }
             }
 
@@ -65,18 +66,21 @@ jobs:
              
             Write-Host "----------------------------------------------------------------------------------------------"   
           }
+
           if (!$found1){
-            echo "Error finding the first expected result. Exiting with failure"
-            exit 1
+            Write-Host "Error finding the first expected result. Exiting with failure"
           } 
           else {
             Write-Host "Found first the expected error succesfully"
           }
 
           if (!$found2){
-            echo "Error finding the second expected result. Exiting with failure"
-            exit 1
+            Write-Host "Error finding the second expected result. Exiting with failure"
           } 
           else {
             Write-Host "Found the second expected error succesfully"
+          }
+
+          if (!$found1 || !found2){
+            exit 1
           }
