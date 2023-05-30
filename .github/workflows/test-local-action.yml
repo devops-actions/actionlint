@@ -44,13 +44,15 @@ jobs:
             Write-Host "Filepath:" $item.filepath
             Write-Host "Line:" $item.line
 
-            if ($item.filepath -eq '.github/workflows/test-local-action.yml' -and $item.line -eq 82) {
+            if ($item.filepath -eq '.github/workflows/workflow-with-errors.yml' -and $item.line -eq 14) {
+              Write-Host "Found first file path and line number"
               if ($item.message -eq 'property ""test-job"" is not defined in object type {test-local-action: {outputs: {}; result: string}}') {
                 $found1 = $true
               }
             }
 
-            if ($item.filepath -eq '.github/workflows/test-local-action.yml' -and $item.line -eq 88) {
+            if ($item.filepath -eq '.github/workflows/workflow-with-errors.yml' -and $item.line -eq 20) {
+              Write-Host "Found second file path and line number"
               if ($item.message -eq 'property ""test-job"" is not defined in object type {}'){
                 $found2 = $true
               }
@@ -72,25 +74,3 @@ jobs:
           else {
             Write-Host "Found the second expected error succesfully"
           }
-        
-  job-with-errors:
-    runs-on: ubuntu-latest
-    needs: test-local-action
-    steps:
-     - name: Non existing output
-       id: fake-output
-       run: |
-        echo "Let's echo an output that does not exist, should fail the check:"
-        echo "Output that does not exist: ${{ needs.test-local-action.outputs.fake-output }}"
-
-     - name: Non existing needs
-       id: fake-needs-setup
-       run: |
-        echo "Let's echo an output that does not exist, should fail the check:"
-        echo "Output that does not exist: ${{ needs.test-job.outputs.fake-output }}" 
-
-     - name: Non existing secret
-       id: fake-secret
-       run: |
-        echo "Let's echo a secret that does not exist, would be nice if this would fail the check:"
-        echo "Secret that does not exist: ${{ secrets.fake-secret }}"
