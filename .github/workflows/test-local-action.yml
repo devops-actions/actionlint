@@ -45,7 +45,7 @@ jobs:
             Write-Host "Line:" $item.line
 
             if ($item.filepath -eq '.github/workflows/test-local-action.yml' -and $item.line -eq 65) {
-              if ($item.message -eq 'property ""fake-output"" is not defined in object type {}') {}
+              if ($item.message -eq 'property ""fake-output"" is not defined in object type {}') {
                 $found1 = $true
               }
             }
