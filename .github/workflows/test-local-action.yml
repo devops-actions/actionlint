@@ -6,6 +6,7 @@ on:
   
 jobs:
   test-local-action:
+    name: Test with normal setup
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -13,19 +14,21 @@ jobs:
       - name: Run the local action from the checked out branch
         id: action-lint
         uses: ./
-            
+        continue-on-error: true
+
       - name: Check for no reported errors
         if: steps.action-lint.outcome=='success'
         run: |
-          echo "Error in 'action-lint' step, expeced a failure status, but got success"
+          echo "Error in 'action-lint' step, expected a failure status, but got success"
           # fail the job so reporting can pick it up
           exit 1
-      
-      - name: Check for expected errors
-        if: always() && steps.action-lint.outcome=='failure'
-        run: |
-          echo "Todo: check the results of fake-output and fake-secret"
-      
+
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: actionlint-results
+          path: ${{ steps.action-lint.outputs.results-file }}
+
       - name: Test output file and expected contents
         if: always()
         shell: pwsh
@@ -33,40 +36,46 @@ jobs:
           RESULTFILE: ${{ steps.action-lint.outputs.results-file }}
         run: |
           echo "Results file is [$env:RESULTFILE]"
-          $result = Get-Content $env:RESULTFILE       
-          $items = @(ConvertFrom-Json $result -Depth 10)     
-      
-          $found1 = $false
-          foreach ($item in $items) { 
-            Write-Host "Found an error: "
-            Write-Host "Message:" $item.message
-            Write-Host "Filepath:" $item.filepath
-            Write-Host "Line:" $item.line
+          $result = $(./.github/workflows/check-resultsfile.ps1 -resultsFilePath $env:RESULTFILE)
 
-            if ($item.filepath -eq ".github/workflows/test-local-action.yml" -and $item.line -eq 63) {
-              $found1 = $true
-            }
-          }      
-
-          if (!$found1){
-            echo "Error finding the first expected result. Exiting with failure"
-            exit 1
-          } 
-          else {
-            Write-Host "Found the expected error succesfully"
-          }
-        
-  job-with-errors:
+          echo "Status: $($result)"
+    
+  test-action-skip-failure:
+    name: Test with skip failure set on the action
     runs-on: ubuntu-latest
     steps:
-     - name: Non existing output
-       id: fake-output
-       run: |
-        echo "Let's echo an output that does not exist, should fail the check:"
-        echo "Output that does not exist: ${{ needs.test-with-local-action.outputs.fake-output }}"
-        
-     - name: Non existing secret
-       id: fake-secret
-       run: |
-        echo "Let's echo a secret that does not exist, should fail the check:"
-        echo "Secret that does not exist: ${{ secrets.fake-secret }}"
+      - uses: actions/checkout@v3
+      
+      - name: Run the local action from the checked out branch
+        id: action-lint
+        uses: ./
+        with: 
+          fail-on-errors: "false"
+
+      - name: Check for no reported errors
+        if: steps.action-lint.outcome=='success'
+        run: |
+          echo "Error in 'action-lint' step, expected a success status, which matches expectations"
+      
+      - name: Check for expected errors
+        if: always() && steps.action-lint.outcome=='failure'
+        run: |
+          echo "Failure status was not expected"
+
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: actionlint-results
+          path: ${{ steps.action-lint.outputs.results-file }}
+
+      - name: Test output file and expected contents
+        if: always()
+        shell: pwsh
+        env:
+          RESULTFILE: ${{ steps.action-lint.outputs.results-file }}
+        run: |
+          echo "Results file is [$env:RESULTFILE]"
+          echo "-------------"
+          cat $env:RESULTFILE
+          echo "-------------"
+          ./.github/workflows/check-resultsfile.ps1 -resultsFilePath $env:RESULTFILE
