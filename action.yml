@@ -17,7 +17,7 @@ runs:
   using: composite
   steps:
   - name: Add annotation matcher for Action Lint to annotate the PR if needed
-    run: echo "::add-matcher::actionlint-matcher.json"
+    run: echo "::add-matcher::$GITHUB_ACTION_PATH/actionlint-matcher.json"
     shell: bash
   
   - name: Docker run    
