@@ -26,8 +26,8 @@ runs:
     env:
       FAILONERRORS: ${{ inputs.fail-on-errors }}
     run: |
-      run: echo "::add-matcher::$GITHUB_ACTION_PATH/actionlint-matcher.json"
-      
+      echo "::add-matcher::$GITHUB_ACTION_PATH/actionlint-matcher.json"
+
       # running version 1.6.22 of rhysd/actionlint
       # disable pipefail -e -o that is set on the shell script from the runner to prevent exiting when the docker run command fails
       set +e +o pipefail;
