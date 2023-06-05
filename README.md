@@ -9,7 +9,7 @@ This action will run your repository through actionlint and detect common errors
 ## Results
 If there are no errors from actionlint, this action will succeed. If there are errors, this action will fail and output the errors in the logs.
 
-If running in a Pull Request context, then the action will also annotate the **changed** files with the errors. This is useful to see what errors were introduced by the Pull Request.
+If running in a Pull Request context, then the action will also annotate the **changed** files with the errors. This is useful to see what errors were introduced by the Pull Request. Note: this only works if you include the `pull-requests: write` permission in your workflow file.
 
 ## Usage:
 ```yaml
