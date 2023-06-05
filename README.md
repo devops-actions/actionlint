@@ -13,12 +13,20 @@ If running in a Pull Request context, then the action will also annotate the **c
 
 ## Usage:
 ```yaml
-  steps: 
-  # checkout the source code to analyze
-  - uses: actions/checkout@v3 # v3
+jobs:
+  run-actionlint:
+    runs-on: ubuntu-latest
+    permissions:
+      # needed for the checkout action
+      contents: read
+      # needed to annotate the files in a pull request with comments
+      pull-requests: write
+    steps: 
+    # checkout the source code to analyze
+    - uses: actions/checkout@v3 # v3
 
-  # run the actionlinter
-  - uses: devops-actions/actionlint@main # vx
+    # run the actionlinter
+    - uses: devops-actions/actionlint@main # vx
 ```
 
 # Errors
