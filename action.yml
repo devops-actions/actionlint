@@ -37,7 +37,7 @@ runs:
       status=$?
 
       if jq -e . >/dev/null 2>&1 <<<"$result"; then
-          echo "Parsed JSON successfully and got something other than false/null"
+          #echo "Parsed JSON successfully and got something other than false/null"
       else
           echo "Failed to parse JSON, or got false/null"
 
@@ -57,8 +57,9 @@ runs:
       else
         echo "Actionlint found errors:"
         json=$(cat actionlint-errors.json | jq)
-        # loop through each error and add an annotation
-        echo $json
+        while IFS= read -r obj; do
+            echo "obj: $obj"
+        done < <(jq -c '.[]' actionlint-errors.json)
       fi
 
       if [[ $FAILONERRORS == "true" ]];
