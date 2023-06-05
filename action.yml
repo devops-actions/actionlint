@@ -17,6 +17,7 @@ runs:
   using: composite
   steps:
   - run: echo "${{ toJSON(github) }}"
+    shell: bash
 
   - name: Docker run rhysd/actionlint
     shell: bash
