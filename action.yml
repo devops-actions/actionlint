@@ -55,8 +55,10 @@ runs:
         echo "Actionlint had no errors"
       else
         echo "Actionlint found errors"
-        echo "Running the docker container directly to show the errors"
-        docker run -v $GITHUB_WORKSPACE:/repo --workdir /repo $actionLintContainer -color   
+        if [[ $FAILONERRORS == "true" ]]; then
+          echo "Running the docker container directly to show the errors"
+          docker run -v $GITHUB_WORKSPACE:/repo --workdir /repo $actionLintContainer -color   
+        fi        
       fi
 
       if [[ $FAILONERRORS == "true" ]];

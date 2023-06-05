@@ -25,8 +25,35 @@ jobs:
     # checkout the source code to analyze
     - uses: actions/checkout@v3 # v3
 
-    # run the actionlinter
-    - uses: devops-actions/actionlint@main # vx
+    # run the actionlinter, will fail on errors
+    - uses: devops-actions/actionlint@v0.1.0 
+```
+
+## Usage with results file:
+If you want to pick up the results file and use its contents somewhere else, then use it as follows:
+```yaml
+on:
+  push: 
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  job-1:
+    runs-on: ubuntu-latest
+    steps:       
+    - uses: actions/checkout@v3
+    - uses: devops-actions/actionlint@v0.1.0
+      continue-on-error: true
+      id: action-lint
+    
+    - uses: actions/upload-artifact@v3
+      with:
+        name: actionlint-results
+        path: ${{ steps.action-lint.outputs.results-file }}
 ```
 
 # Errors
@@ -34,3 +61,5 @@ jobs:
 ## No projec was found in any parent directories
 Error message: `no project was found in any parent directories of ".". check workflows directory is put correctly in your Git repository`
 Solution: Add a `uses: actions/checkout@v3 # v3` to your workflow file, so the repository can be analyzed
+
+
