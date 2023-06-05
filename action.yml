@@ -37,6 +37,8 @@ runs:
       status=$?
 
       safeStringResult=$(printf "%q" $result)
+      echo $safeStringResult
+      echo "+++++++++++++++++++++++++++++++++++++++++++++"
       if [[ $safeStringResult -ne 'no project was found in any parent directories of ".". check workflows directory is put correctly in your Git repository' ]]; then
         echo "Showing the resulting messages:"
         echo $result
