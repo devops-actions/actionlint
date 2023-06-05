@@ -26,9 +26,9 @@ runs:
       # disable pipefail -e -o that is set on the shell script from the runner to prevent exiting when the docker run command fails
       set +e +o pipefail;
 
+      echo "::add-matcher::$GITHUB_ACTION_PATH/actionlint-matcher.json"
       actionLintContainer=rhysd/actionlint@sha256:5f957b2a08d223e48133e1a914ed046bea12e578fe2f6ae4de47fdbe691a2468
       
-
       # run again to get a json result
       result=$(docker run -v $GITHUB_WORKSPACE:/repo --workdir /repo $actionLintContainer -color -format "{{json .}}")
       status=$?
@@ -53,7 +53,7 @@ runs:
         echo "Actionlint had no errors"
       else
         echo "Actionlint found errors"
-        echo "Running the docker container directly"
+        echo "Running the docker container directly to show the errors"
         docker run -v $GITHUB_WORKSPACE:/repo --workdir /repo $actionLintContainer -color   
       fi
 
