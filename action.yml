@@ -38,6 +38,7 @@ runs:
 
       if jq -e . >/dev/null 2>&1 <<<"$result"; then
           #echo "Parsed JSON successfully and got something other than false/null"
+          sleep .1s
       else
           echo "Failed to parse JSON, or got false/null"
 
