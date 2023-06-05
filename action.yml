@@ -16,18 +16,22 @@ outputs:
 runs:
   using: composite
   steps:
-  - name: Docker run    
+  - run: echo "${{ toJSON(github) }}"
+
+  - name: Docker run rhysd/actionlint
     shell: bash
     id: run
     env:
       FAILONERRORS: ${{ inputs.fail-on-errors }}
     run: |
-      # running version 1.6.22 of rhysd/actionlint
+      # execute rhysd/actionlint as a docker container
+
       # disable pipefail -e -o that is set on the shell script from the runner to prevent exiting when the docker run command fails
       set +e +o pipefail;
 
+      # matcher needed to annotate the PR with comments
       echo "::add-matcher::$GITHUB_ACTION_PATH/actionlint-matcher.json"
-      actionLintContainer=rhysd/actionlint@sha256:5f957b2a08d223e48133e1a914ed046bea12e578fe2f6ae4de47fdbe691a2468
+      actionLintContainer=rhysd/actionlint@sha256:5f957b2a08d223e48133e1a914ed046bea12e578fe2f6ae4de47fdbe691a2468 # 1.6.22
       
       # run again to get a json result
       result=$(docker run -v $GITHUB_WORKSPACE:/repo --workdir /repo $actionLintContainer -color -format "{{json .}}")
