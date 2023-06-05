@@ -16,26 +16,22 @@ outputs:
 runs:
   using: composite
   steps:
-  - name: Add annotation matcher for Action Lint to annotate the PR if needed
-    run: echo "::add-matcher::$GITHUB_ACTION_PATH/actionlint-matcher.json"
-    shell: bash
-  
   - name: Docker run    
     shell: bash
     id: run
     env:
       FAILONERRORS: ${{ inputs.fail-on-errors }}
     run: |
-      echo "::add-matcher::$GITHUB_ACTION_PATH/actionlint-matcher.json"
-
       # running version 1.6.22 of rhysd/actionlint
       # disable pipefail -e -o that is set on the shell script from the runner to prevent exiting when the docker run command fails
       set +e +o pipefail;
 
-      echo "Workspace:          [$GITHUB_WORKSPACE]"
-      echo "GitHub Action path: [$GITHUB_ACTION_PATH]"
+      actionLintContainer=rhysd/actionlint@sha256:5f957b2a08d223e48133e1a914ed046bea12e578fe2f6ae4de47fdbe691a2468
+      echo "running the docker container directly"
+      docker run -v $GITHUB_WORKSPACE:/repo --workdir /repo $actionLintContainer -color
 
-      result=$(docker run -v $GITHUB_WORKSPACE:/repo --workdir /repo rhysd/actionlint@sha256:5f957b2a08d223e48133e1a914ed046bea12e578fe2f6ae4de47fdbe691a2468 -color -format "{{json .}}")
+      # run again to get a json result
+      result=$(docker run -v $GITHUB_WORKSPACE:/repo --workdir /repo $actionLintContainer -color -format "{{json .}}")
       status=$?
 
       if jq -e . >/dev/null 2>&1 <<<"$result"; then
@@ -57,15 +53,8 @@ runs:
       then
         echo "Actionlint had no errors"
       else
-        echo "Actionlint found errors:"
-        json=$(cat actionlint-errors.json | jq)
-        while IFS= read -r obj; do
-            echo "obj: $obj"
-        done < <(jq -c '.[]' actionlint-errors.json)
+        echo "Actionlint found errors"        
       fi
-
-      echo "running the docker container directly"
-      docker run -v $GITHUB_WORKSPACE:/repo --workdir /repo rhysd/actionlint@sha256:5f957b2a08d223e48133e1a914ed046bea12e578fe2f6ae4de47fdbe691a2468 -color
 
       if [[ $FAILONERRORS == "true" ]];
       then
