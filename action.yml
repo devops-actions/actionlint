@@ -36,15 +36,16 @@ runs:
       result=$(docker run -v $GITHUB_WORKSPACE:/repo --workdir /repo rhysd/actionlint@sha256:5f957b2a08d223e48133e1a914ed046bea12e578fe2f6ae4de47fdbe691a2468 -color -format "{{json .}}")
       status=$?
 
-      echo "+++++++++++++++++++++++++++++++++++++++++++++"
-      safeStringResult=$(printf "%q" $result)
-      echo $safeStringResult
-      echo "+++++++++++++++++++++++++++++++++++++++++++++"
-      sleep .5s
-      if [[ $safeStringResult -ne 'no project was found in any parent directories of ".". check workflows directory is put correctly in your Git repository' ]]; then
-        echo "Showing the resulting messages:"
-        echo $result
-        echo "-------------------------------"
+      if jq -e . >/dev/null 2>&1 <<<"$result"; then
+          echo "Parsed JSON successfully and got something other than false/null"
+      else
+          echo "Failed to parse JSON, or got false/null"
+
+          if [[ $result -ne 'no project was found in any parent directories of ".". check workflows directory is put correctly in your Git repository' ]]; then
+            echo "Showing the resulting messages:"
+            echo $result
+            echo "-------------------------------"
+          fi
       fi
       
       echo $result>"actionlint-errors.json"
