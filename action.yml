@@ -27,8 +27,7 @@ runs:
       set +e +o pipefail;
 
       actionLintContainer=rhysd/actionlint@sha256:5f957b2a08d223e48133e1a914ed046bea12e578fe2f6ae4de47fdbe691a2468
-      echo "running the docker container directly"
-      docker run -v $GITHUB_WORKSPACE:/repo --workdir /repo $actionLintContainer -color
+      
 
       # run again to get a json result
       result=$(docker run -v $GITHUB_WORKSPACE:/repo --workdir /repo $actionLintContainer -color -format "{{json .}}")
@@ -53,7 +52,9 @@ runs:
       then
         echo "Actionlint had no errors"
       else
-        echo "Actionlint found errors"        
+        echo "Actionlint found errors"
+        echo "Running the docker container directly"
+        docker run -v $GITHUB_WORKSPACE:/repo --workdir /repo $actionLintContainer -color   
       fi
 
       if [[ $FAILONERRORS == "true" ]];
