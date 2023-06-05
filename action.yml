@@ -36,20 +36,24 @@ runs:
       result=$(docker run -v $GITHUB_WORKSPACE:/repo --workdir /repo rhysd/actionlint@sha256:5f957b2a08d223e48133e1a914ed046bea12e578fe2f6ae4de47fdbe691a2468 -color -format "{{json .}}")
       status=$?
 
-      if [[ $result != *"no project was found in any parent directories of ".". check workflows directory is put correctly in your Git repository"* ]];
+      if [[ $result -ne *"no project was found in any parent directories of ".". check workflows directory is put correctly in your Git repository"* ]];
       then
+        echo "Showing the resulting messages:"
         echo $result
+        echo "-------------------------------"
       fi
       
-      echo $result > "actionlint-errors.json"
+      echo $result>"actionlint-errors.json"
       echo "resultsfile=actionlint-errors.json">>$GITHUB_OUTPUT
       
       if [[ $status == 0 ]];
       then
         echo "Actionlint had no errors"
       else
-        echo "Actionlint found errors"
-        cat $GITHUB_OUTPUT
+        echo "Actionlint found errors:"
+        json=$(cat actionlint-errors.json | jq)
+        # loop through each error and add an annotation
+        echo $json
       fi
 
       if [[ $FAILONERRORS == "true" ]];
