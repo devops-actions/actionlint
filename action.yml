@@ -16,8 +16,10 @@ outputs:
 runs:
   using: composite
   steps:
-  - run: echo "${{ toJSON(github) }}"
-    shell: bash
+  - shell: bash
+    run: |
+      # check the scopes of the GITHUB_TOKEN
+      curl -sS -f -I -H "Authorization: token ${GITHUB_TOKEN}" https://api.github.com | grep ^x-oauth-scopes: | cut -d' ' -f2- | tr -d "[:space:]" | tr ',' '\n'
 
   - name: Docker run rhysd/actionlint
     shell: bash
