@@ -44,6 +44,7 @@ runs:
         echo "Actionlint had no errors"
       else
         echo "Actionlint found errors"
+        cat $GITHUB_OUTPUT
       fi
 
       if [[ $FAILONERRORS == "true" ]];
