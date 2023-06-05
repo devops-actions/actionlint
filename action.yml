@@ -65,7 +65,7 @@ runs:
       fi
 
       echo "running the docker container directly"
-      docker run -v $GITHUB_WORKSPACE:/repo --workdir /repo rhysd/actionlint@sha256:5f957b2a08d223e48133e1a914ed046bea12e578fe2f6ae4de47fdbe691a2468 -color -format "{{json .}}"
+      docker run -v $GITHUB_WORKSPACE:/repo --workdir /repo rhysd/actionlint@sha256:5f957b2a08d223e48133e1a914ed046bea12e578fe2f6ae4de47fdbe691a2468 -color
 
       if [[ $FAILONERRORS == "true" ]];
       then
