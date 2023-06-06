@@ -13,6 +13,8 @@ jobs:
         run: |
            # get the latest version of rhysd/actionlint from the github releases in that repo
            $latest=(Invoke-RestMethod -Uri https://api.github.com/repos/rhysd/actionlint/releases/latest).tag_name
+           # remove the v from the version number
+           $latest=$latest.Substring(1)
            Write-Host "Found the lastest version of rhysd/actionlint:$latest"
            
            # pull so we have the info locally
