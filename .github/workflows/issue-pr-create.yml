@@ -1,5 +1,5 @@
 on:
-  issue:
+  issues:
     types: [opened, edited]
   pull_request:
     types: [opened, edited]
