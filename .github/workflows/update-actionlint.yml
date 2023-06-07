@@ -41,3 +41,18 @@ jobs:
           cd $env:GITHUB_WORKSPACE
           $settings | ConvertTo-Json | Out-File -FilePath settings.json -Encoding utf8
           cat settings.json
+
+          git status
+
+          # check with porcelain if there are changes
+          if (git status --porcelain | Select-String -Pattern 'settings.json') {
+            echo "settings.json has changed, committing and pushing"
+            git config --global user.email "bot@github-actions.com"
+            git config --global user.name "GitHub Actions Bot"
+            git add settings.json
+            git commit -m "Update actionlint version to $latest"
+            git push
+          }
+          else {
+            echo "settings.json has not changed, no need to commit"
+          }
