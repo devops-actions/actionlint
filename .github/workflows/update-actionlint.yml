@@ -1,6 +1,8 @@
 name: Update the rhysd/actionlint reference
 on:
   push:
+    paths:
+      - .github/workflows/update-actionlint.yml
 
   schedule:
     - cron: '0 0 * * 0' # every Monday at midnight
