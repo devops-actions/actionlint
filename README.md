@@ -26,7 +26,7 @@ jobs:
     - uses: actions/checkout@v3 # v3
 
     # run the actionlinter, will fail on errors
-    - uses: devops-actions/actionlint@v0.1.0 
+    - uses: devops-actions/actionlint@8122ee0cc2745accd068bb9a2fcd3c470a93d904 #v0.1.0 
 ```
 
 ## Usage with results file:
@@ -46,7 +46,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:       
     - uses: actions/checkout@v3
-    - uses: devops-actions/actionlint@v0.1.0
+    - uses: devops-actions/actionlint@8122ee0cc2745accd068bb9a2fcd3c470a93d904 #v0.1.0
       continue-on-error: true
       id: action-lint
     
