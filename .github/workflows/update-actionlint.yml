@@ -51,7 +51,7 @@ jobs:
             git config --global user.name "GitHub Actions Bot"
             git add settings.json
             git commit -m "Update actionlint version to $latest"
-            git push
+            #git push
           }
           else {
             echo "settings.json has not changed, no need to commit"
