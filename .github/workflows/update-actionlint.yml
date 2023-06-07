@@ -25,7 +25,7 @@ jobs:
           docker pull rhysd/actionlint:$latest
 
           # find the info we need
-          $digest=(docker image inspect rhysd/actionlint:$latest | ConvertFrom-Json).RepoDigests
+          $digest=(docker image inspect rhysd/actionlint:$latest | ConvertFrom-Json).RepoDigests[-1]
 
           # show the version information
           Write-Host "Found the lastest version of rhysd/actionlint as SHA hash [$digest]"
