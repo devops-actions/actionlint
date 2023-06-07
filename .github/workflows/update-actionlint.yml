@@ -1,0 +1,69 @@
+name: Update the rhysd/actionlint reference
+on:
+  push:
+    paths:
+      - .github/workflows/update-actionlint.yml
+
+  schedule:
+    - cron: '0 0 * * 0' # every Monday at midnight
+  
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v3
+
+      - shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # get the latest version of rhysd/actionlint from the github releases in that repo
+          $latest=(Invoke-RestMethod -Uri https://api.github.com/repos/rhysd/actionlint/releases/latest).tag_name
+          # remove the v from the version number
+          $latest=$latest.Substring(1)
+          Write-Host "Found the lastest version of rhysd/actionlint:$latest"
+           
+          # pull so we have the info locally
+          docker pull rhysd/actionlint:$latest
+
+          # find the info we need
+          $digest=(docker image inspect rhysd/actionlint:$latest | ConvertFrom-Json).RepoDigests[-1]
+
+          # show the version information
+          Write-Host "Found the lastest version of rhysd/actionlint as SHA hash [$digest]"
+
+          # write the info to the settings.json file
+          $settings = @{
+            actionlintversion = $digest
+            actionlintversiontag = $latest
+          }
+
+          echo "GITHUB_WORKSPACE=[$($env:GITHUB_WORKSPACE)]"
+          ls $GITHUB_WORKSPACE
+          cd $env:GITHUB_WORKSPACE
+          $settings | ConvertTo-Json | Out-File -FilePath settings.json -Encoding utf8
+          cat settings.json
+
+          git status
+
+          # check with porcelain if there are changes
+          if (git status --porcelain | Select-String -Pattern 'settings.json') {
+            git checkout -b update-actionlint-$latest
+
+            echo "settings.json has changed, committing and pushing"
+            git config --global user.email "bot@github-actions.com"
+            git config --global user.name "GitHub Actions Bot"
+            git add settings.json
+            git commit -m "Update actionlint version to $latest"
+            git push  --set-upstream origin update-actionlint-$latest
+
+            gh pr create --title "Update actionlint version to $latest" --body "Update actionlint version to $latest" --base main --head update-actionlint-$latest
+          }
+          else {
+            echo "settings.json has not changed, no need to commit"
+          }
