@@ -16,6 +16,8 @@ jobs:
       - uses: actions/checkout@v3
 
       - shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           # get the latest version of rhysd/actionlint from the github releases in that repo
           $latest=(Invoke-RestMethod -Uri https://api.github.com/repos/rhysd/actionlint/releases/latest).tag_name
