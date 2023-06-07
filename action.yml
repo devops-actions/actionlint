@@ -22,8 +22,9 @@ runs:
     run: |
       # get actionlintversion from the settings.json file
       actionLintVersion=$(jq -r '.actionlintversion' $GITHUB_ACTION_PATH/settings.json)
+      actionlintversiontag=$(jq -r '.actionlintversiontag' $GITHUB_ACTION_PATH/settings.json)
       echo "actionLintVersion=$actionLintVersion">>$GITHUB_OUTPUT
-      echo "Found the version of rhysd/actionlint to use [$actionLintVersion]"
+      echo "Found the version of rhysd/actionlint to use [$actionlintversiontag], with SHA [$actionLintVersion]"
 
   - name: Docker run rhysd/actionlint
     shell: bash
