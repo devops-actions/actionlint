@@ -11,17 +11,25 @@ jobs:
     steps:
       - shell: pwsh
         run: |
-           # get the latest version of rhysd/actionlint from the github releases in that repo
-           $latest=(Invoke-RestMethod -Uri https://api.github.com/repos/rhysd/actionlint/releases/latest).tag_name
-           # remove the v from the version number
-           $latest=$latest.Substring(1)
-           Write-Host "Found the lastest version of rhysd/actionlint:$latest"
+          # get the latest version of rhysd/actionlint from the github releases in that repo
+          $latest=(Invoke-RestMethod -Uri https://api.github.com/repos/rhysd/actionlint/releases/latest).tag_name
+          # remove the v from the version number
+          $latest=$latest.Substring(1)
+          Write-Host "Found the lastest version of rhysd/actionlint:$latest"
            
-           # pull so we have the info locally
-           docker pull rhysd/actionlint:$latest
+          # pull so we have the info locally
+          docker pull rhysd/actionlint:$latest
 
-           # find the info we need
-           $digest=(docker image inspect rhysd/actionlint:$latest | ConvertFrom-Json).RepoDigests
+          # find the info we need
+          $digest=(docker image inspect rhysd/actionlint:$latest | ConvertFrom-Json).RepoDigests
 
-           # show the version information
-           Write-Host "Found the lastest version of rhysd/actionlint as SHA hash [$digest]"
+          # show the version information
+          Write-Host "Found the lastest version of rhysd/actionlint as SHA hash [$digest]"
+
+          # write the info to the settings.json file
+          $settings = @{
+            actionlintversion = $digest
+            actionlintversiontag = $latest
+          }
+          $settings | ConvertTo-Json | Out-File -FilePath $env:GITHUB_ACTION_PATH/settings.json -Encoding utf8
+          cat $env:GITHUB_ACTION_PATH/settings.json
