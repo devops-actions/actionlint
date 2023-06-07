@@ -40,7 +40,7 @@ runs:
       # matcher needed to annotate the PR with comments
       echo "::add-matcher::$GITHUB_ACTION_PATH/actionlint-matcher.json"
       version=${{ steps.getversion.outputs.actionLintVersion }}
-      actionLintContainer=rhysd/actionlint@sha256:$version
+      actionLintContainer=$version
 
       # check if version has a value
       if [[ -z "$version" ]]; then
