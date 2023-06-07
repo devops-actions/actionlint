@@ -31,5 +31,5 @@ jobs:
             actionlintversion = $digest
             actionlintversiontag = $latest
           }
-          $settings | ConvertTo-Json | Out-File -FilePath settings.json -Encoding utf8
+          $settings | ConvertTo-Json | Out-File -FilePath $GITHUB_WORKSPACE/settings.json -Encoding utf8
           cat $env:GITHUB_ACTION_PATH/settings.json
