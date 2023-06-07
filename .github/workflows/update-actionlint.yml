@@ -38,5 +38,5 @@ jobs:
 
           echo "GITHUB_WORKSPACE=[$($env:GITHUB_WORKSPACE)]"
           ls $GITHUB_WORKSPACE
-          $settings | ConvertTo-Json | Out-File -FilePath $env:GITHUB_WORKSPACE/settings.json -Encoding utf8
-          cat $env:GITHUB_ACTION_PATH/settings.json
+          $settings | ConvertTo-Json | Out-File -FilePath $($env:GITHUB_WORKSPACE)/settings.json -Encoding utf8
+          cat $env:GITHUB_WORKSPACE/settings.json
