@@ -60,7 +60,7 @@ jobs:
             git config --global user.name "GitHub Actions Bot"
             git add settings.json
             git commit -m "Update actionlint version to $latest"
-            git push
+            git push  --set-upstream origin update-actionlint-$latest
 
             gh pr create --title "Update actionlint version to $latest" --body "Update actionlint version to $latest" --base main --head update-actionlint-$latest
           }
