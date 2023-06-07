@@ -11,8 +11,11 @@ on:
 jobs:
   notify:
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
     steps:
-        - uses: devops-actions/issue-comment-tag@v0.1.0
+        - uses: devops-actions/issue-comment-tag@v0.1.7
           with:
             team: ${{ vars.tag_team }}
             issue: ${{ github.event.issue.number }}
