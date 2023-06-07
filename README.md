@@ -1,3 +1,5 @@
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/devops-actions/actionlint/badge)](https://api.securityscorecards.dev/projects/github.com/devops-actions/actionlint)
+
 # actionlint
 Action wrapper for [rhysd/actionlint](https://github.com/rhysd/actionlint) to make using it easier.
 
