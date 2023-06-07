@@ -23,6 +23,7 @@ runs:
       # get actionlintversion from the settings.json file
       actionLintVersion=$(jq -r '.actionlintversion' $GITHUB_ACTION_PATH/settings.json)
       echo "actionLintVersion=$actionLintVersion">>$GITHUB_OUTPUT
+      echo "Found the version of rhysd/actionlint to use [$actionLintVersion]"
 
   - name: Docker run rhysd/actionlint
     shell: bash
@@ -37,7 +38,14 @@ runs:
 
       # matcher needed to annotate the PR with comments
       echo "::add-matcher::$GITHUB_ACTION_PATH/actionlint-matcher.json"
-      actionLintContainer=rhysd/actionlint@sha256:${{ steps.getversion.outputs.actionLintVersion }}}
+      version=${{ steps.getversion.outputs.actionLintVersion }}
+      actionLintContainer=rhysd/actionlint@sha256:$version
+
+      # check if version has a value
+      if [[ -z "$version" ]]; then
+        echo "ActionLint version to use is empty, cannot continue"
+        exit 1
+      fi
       
       # run again to get a json result
       result=$(docker run -v $GITHUB_WORKSPACE:/repo --workdir /repo $actionLintContainer -color -format "{{json .}}")
