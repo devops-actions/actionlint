@@ -1,0 +1,23 @@
+name: Scorecards supply-chain security scan
+on:
+  # Only the default branch is supported.
+  branch_protection_rule:
+  schedule:
+    # Weekly on Saturdays.
+    - cron: '33 1 * * 6'
+  push:
+    branches: [main]
+  workflow_dispatch:
+    
+# Declare default GITHUB_TOKEN permissions as read only.
+permissions: read-all
+
+jobs:
+  analysis:
+    uses: devops-actions/.github/.github/workflows/rw-ossf-scorecard.yml@main
+    permissions:
+      # Needed to upload the results to code-scanning dashboard.
+      security-events: write
+      id-token: write
+      actions: read
+      contents: read
