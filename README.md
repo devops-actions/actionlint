@@ -60,8 +60,12 @@ jobs:
 
 # Errors
 
-## No projec was found in any parent directories
+## No project was found in any parent directories
 Error message: `no project was found in any parent directories of ".". check workflows directory is put correctly in your Git repository`
 Solution: Add a `uses: actions/checkout@v3 # v3` to your workflow file, so the repository can be analyzed
 
-
+# Configuration
+If you want to hide certain warnings from shellcheck, then you can use the directives as shown in [their docs here](https://github.com/koalaman/shellcheck/wiki/Directive): 
+``` shell
+# shellcheck disable=code
+```
