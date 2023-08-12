@@ -6,7 +6,7 @@ on:
 
   schedule:
     - cron: '0 0 * * 0' # every Monday at midnight
-  
+
   workflow_dispatch:
 
 jobs:
@@ -17,6 +17,7 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v3
+      - uses: fregante/setup-git-user@77c1b5542f14ab6db4b8462d6857e31deb988b09 # v2.0.1
 
       - shell: pwsh
         env:
@@ -27,7 +28,7 @@ jobs:
           # remove the v from the version number
           $latest=$latest.Substring(1)
           Write-Host "Found the lastest version of rhysd/actionlint:$latest"
-           
+
           # pull so we have the info locally
           docker pull rhysd/actionlint:$latest
 
@@ -56,8 +57,6 @@ jobs:
             git checkout -b update-actionlint-$latest
 
             echo "settings.json has changed, committing and pushing"
-            git config --global user.email "bot@github-actions.com"
-            git config --global user.name "GitHub Actions Bot"
             git add settings.json
             git commit -m "Update actionlint version to $latest"
             git push  --set-upstream origin update-actionlint-$latest
