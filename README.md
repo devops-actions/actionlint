@@ -1,12 +1,14 @@
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/devops-actions/actionlint/badge)](https://api.securityscorecards.dev/projects/github.com/devops-actions/actionlint)
 
 # actionlint
-Action wrapper for [rhysd/actionlint](https://github.com/rhysd/actionlint) to make using it easier.
+Action wrapper for [rhysd/actionlint](https://github.com/rhysd/actionlint) to make using it easier (using an action with automatic version updates instead of manual link + manual update process).
 
 This action will run your repository through actionlint and detect common errors like:
-- Calling an `output` or `needs` object that has not been defined
+- Calling an `output` or `needs` object that has not been defined: also prevents typos
 - Run shell check on all `run` commands
 - And more, check the [actionlint documentation](https://github.com/rhysd/actionlint) for more information
+
+> Note: Actionlint does _not_ check for external output, like usage of ${{ input.name }} into the shell commands. The reasoning is that to be able to inject something, you need to have write access to the repo (inputs come either from workflow files or workflow_dispatch events. 
 
 ## Results
 If there are no errors from actionlint, this action will succeed. If there are errors, this action will fail and output the errors in the logs.
