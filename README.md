@@ -71,3 +71,5 @@ If you want to hide certain warnings from shellcheck, then you can use the direc
 ``` shell
 # shellcheck disable=code
 ```
+
+In some cases the directives are not picked up (might be depending on the shell it is checking. It can then help to add the `shell: your-shell-here` specification to your workflow file. I've seen this confusion happening with PowerShell code on a Windows based runner. Shellcheck was analyzing the script of the `run` step as if it where bash. The `shell` keyword was not needed for the workflow to run, as the default shell on the Windows runner was PowerShell already. Shellcheck cannot handle that. Specifying the keyword stopped the 'errors' from being reported.
