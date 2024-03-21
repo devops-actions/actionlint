@@ -1,4 +1,4 @@
 {
-  "actionlintversion": "rhysd/actionlint@sha256:2595154b67df16b8bb9cf1ca01eeefe01bc18b68daa5ee745ba8edf2405be740",
-  "actionlintversiontag": "1.6.25"
+  "actionlintversiontag": "1.6.27",
+  "actionlintversion": "rhysd/actionlint@sha256:d84eca815fc24f72546ec1f2f416d9500ad3349ce7db098cf7a52256f5fd4384"
 }
