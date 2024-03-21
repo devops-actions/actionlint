@@ -9,7 +9,7 @@ jobs:
     name: Test with normal setup
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       
       - name: Run the local action from the checked out branch
         id: action-lint
@@ -45,7 +45,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: test-local-action
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       
       - name: Run the local action from the checked out branch
         id: action-lint
