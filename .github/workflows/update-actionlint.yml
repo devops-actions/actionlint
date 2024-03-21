@@ -16,7 +16,7 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: fregante/setup-git-user@77c1b5542f14ab6db4b8462d6857e31deb988b09 # v2.0.1
 
       - shell: pwsh
