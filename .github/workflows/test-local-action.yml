@@ -23,7 +23,7 @@ jobs:
           # fail the job so reporting can pick it up
           exit 1
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: actionlint-results
@@ -63,7 +63,7 @@ jobs:
         run: |
           echo "Failure status was not expected"
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: actionlint-results
