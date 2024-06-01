@@ -8,6 +8,10 @@ inputs:
     description: "Fail the action if errors are found"
     required: false
     default: "true"
+  shellcheck_opts:
+    description: "Custom SHELLCHECK_OPTS"
+    required: false
+    default: ""
 outputs:
   results-file:
     description: "Path to the json results of the linter"
@@ -31,6 +35,7 @@ runs:
     id: run
     env:
       FAILONERRORS: ${{ inputs.fail-on-errors }}
+      SHELLCHECK_OPTS: ${{ inputs.shellcheck_opts }}
     run: |
       # execute rhysd/actionlint as a docker container
 
@@ -49,7 +54,7 @@ runs:
       fi
       
       # run again to get a json result
-      result=$(docker run -v $GITHUB_WORKSPACE:/repo --workdir /repo $actionLintContainer -color -format "{{json .}}")
+      result=$(docker run -v $GITHUB_WORKSPACE:/repo --workdir /repo -e SHELLCHECK_OPTS="${SHELLCHECK_OPTS}" $actionLintContainer -color -format "{{json .}}")
       status=$?
 
       if jq -e . >/dev/null 2>&1 <<<"$result"; then
@@ -74,7 +79,7 @@ runs:
         echo "Actionlint found errors"
         if [[ $FAILONERRORS == "true" ]]; then
           echo "Running the docker container directly to show the errors"
-          docker run -v $GITHUB_WORKSPACE:/repo --workdir /repo $actionLintContainer -color   
+          docker run -v $GITHUB_WORKSPACE:/repo --workdir /repo -e SHELLCHECK_OPTS="${SHELLCHECK_OPTS}" $actionLintContainer -color   
         fi        
       fi
 
