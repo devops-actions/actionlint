@@ -34,7 +34,7 @@ jobs:
     - uses: actions/checkout@v4 # v4
 
     # run the actionlinter, will fail on errors
-    - uses: devops-actions/actionlint@c0ee017f8abef55d843a647cd737b87a1976eb69 #v0.1.1
+    - uses: devops-actions/actionlint@e7ee33fbf5aa8c9f9ee1145137f3e52e25d6a35b #v0.1.3
 ```
 
 ## Usage with results file:
@@ -55,7 +55,7 @@ jobs:
     steps:       
     - uses: actions/checkout@v4
 
-    - uses: devops-actions/actionlint@c0ee017f8abef55d843a647cd737b87a1976eb69 #v0.1.1
+    - uses: devops-actions/actionlint@e7ee33fbf5aa8c9f9ee1145137f3e52e25d6a35b #v0.1.3
       continue-on-error: true
       id: action-lint
     
@@ -84,7 +84,7 @@ Another option is to pass in extra `shellcheck_opts` for the warnings you want t
   steps:       
     - uses: actions/checkout@v4
 
-    - uses: devops-actions/actionlint@v0.1.2
+    - uses: devops-actions/actionlint@e7ee33fbf5aa8c9f9ee1145137f3e52e25d6a35b #v0.1.3
       continue-on-error: true
       id: action-lint
       with:
