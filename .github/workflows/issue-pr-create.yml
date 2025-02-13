@@ -23,6 +23,12 @@ jobs:
           with:
             egress-policy: audit
 
+        - env:
+            CONTEXT: toJson(${{ github.event }})
+          run: |
+            echo "$CONTEXT"
+           
+
         - uses: devops-actions/issue-comment-tag@ec5e2b8d5f031330ff19bf4ee5b5252b1176995a # v0.1.8
           with:
             team: ${{ vars.TAG_TEAM }}
