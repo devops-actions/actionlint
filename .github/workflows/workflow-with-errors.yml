@@ -7,11 +7,19 @@ on:
         required: false
         default: 'example'
   
+permissions:
+  contents: read
+
 jobs:        
   job-with-errors:
     runs-on: ubuntu-latest
     needs: test-local-action
     steps:
+     - name: Harden the runner (Audit all outbound calls)
+       uses: step-security/harden-runner@v2
+       with:
+         egress-policy: audit
+
      - name: Non existing output
        id: fake-output
        run: |
