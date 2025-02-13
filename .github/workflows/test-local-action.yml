@@ -26,7 +26,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: actionlint-results
+          name: actionlint-results-local
           path: ${{ steps.action-lint.outputs.results-file }}
 
       - name: Test output file and expected contents
@@ -66,7 +66,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: actionlint-results
+          name: actionlint-results-failure
           path: ${{ steps.action-lint.outputs.results-file }}
 
       - name: Test output file and expected contents

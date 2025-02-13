@@ -9,7 +9,7 @@ This action will run your repository through actionlint and detect common errors
 - And more, check the [actionlint documentation](https://github.com/rhysd/actionlint) for more information
 
 > [!NOTE]
-> Actionlint does _not_ check for external output, like usage of ${{ input.name }} into the shell commands. The reasoning is that to be able to inject something, you need to have write access to the repo (inputs come either from workflow files or workflow_dispatch events.
+> Actionlint does _not_ check for external output, like usage of ${{ input.name }} into the shell commands. The reasoning is that to be able to inject something, you need to have **write** access to the repo (inputs come either from workflow files or workflow_dispatch events).
 
 > [!NOTE]
 > Actionlint unfortunately does **not** support (composite) action definition files.
