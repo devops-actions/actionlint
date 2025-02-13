@@ -25,7 +25,7 @@ jobs:
 
         - uses: devops-actions/issue-comment-tag@ec5e2b8d5f031330ff19bf4ee5b5252b1176995a # v0.1.8
           with:
-            team: ${{ vars.tag_team }}
+            team: ${{ vars.TAG_TEAM }}
             issue: ${{ github.event.issue.number }}
             pr: ${{ github.event.pull_request.number }}
             owner: ${{ github.repository_owner }}
