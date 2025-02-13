@@ -8,6 +8,9 @@ on:
     paths:
       - .github/workflows/issue-pr-create.yml
   
+permissions:
+  contents: read
+
 jobs:
   notify:
     runs-on: ubuntu-latest
@@ -15,6 +18,11 @@ jobs:
       issues: write
       pull-requests: write
     steps:
+        - name: Harden the runner (Audit all outbound calls)
+          uses: step-security/harden-runner@cb605e52c26070c328afc4562f0b4ada7618a84e # v2.10.4
+          with:
+            egress-policy: audit
+
         - uses: devops-actions/issue-comment-tag@ec5e2b8d5f031330ff19bf4ee5b5252b1176995a # v0.1.8
           with:
             team: ${{ vars.tag_team }}

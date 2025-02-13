@@ -18,6 +18,9 @@ on:
 ###############
 # Set the Job #
 ###############
+permissions:
+  contents: read
+
 jobs:
   build:
     # Name the Job
@@ -36,8 +39,13 @@ jobs:
       ##########################
       # Checkout the code base #
       ##########################
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@cb605e52c26070c328afc4562f0b4ada7618a84e # v2.10.4
+        with:
+          egress-policy: audit
+
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           # Full git history is needed to get a proper
           # list of changed files within `super-linter`
@@ -47,7 +55,7 @@ jobs:
       # Run Linter against code base #
       ################################
       - name: Lint Code Base
-        uses: github/super-linter/slim@v7
+        uses: github/super-linter/slim@b807e99ddd37e444d189cfd2c2ca1274d8ae8ef1 # v7
         env:
           VALIDATE_ALL_CODEBASE: true
           DEFAULT_BRANCH: main
