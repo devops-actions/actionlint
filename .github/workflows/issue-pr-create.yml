@@ -24,7 +24,7 @@ jobs:
             egress-policy: audit
 
         - env:
-            CONTEXT: toJson(${{ github.event }})
+            CONTEXT: ${{ toJSON(github.event) }}
           run: |
             echo "$CONTEXT"
            
