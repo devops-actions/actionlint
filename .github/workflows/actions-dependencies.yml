@@ -1,4 +1,7 @@
 name: Submit Actions Dependencies
+
+permissions:
+  contents: read
 on:
   push:
     branches: [main]
