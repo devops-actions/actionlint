@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  none
+  contents: read
 
 jobs:
   semver:

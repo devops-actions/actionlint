@@ -5,7 +5,7 @@ on:
   pull_request:
 
 permissions:
-  none
+  contents: read
   
 jobs:
   test-local-action:
