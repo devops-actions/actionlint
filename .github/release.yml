@@ -1,0 +1,15 @@
+changelog:
+  categories:
+    - title: Improvements
+      labels:
+        - Semver-Minor
+        - enhancement
+    - title: Dependency updates (GitHub Actions)
+      labels:
+        - github_actions
+    - title: Dependency updates (Other)
+      labels:
+        - dependencies
+    - title: Other Changes
+      labels:
+        - "*"
