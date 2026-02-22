@@ -62,14 +62,30 @@ jobs:
 
           # check with porcelain if there are changes
           if (git status --porcelain | Select-String -Pattern 'settings.json') {
-            git checkout -b update-actionlint-$latest
+            $branchName = "update-actionlint-$latest"
+
+            # check if the remote branch already exists
+            $remoteBranch = git ls-remote --heads origin $branchName
+            if ($remoteBranch) {
+              echo "Remote branch $branchName already exists, deleting it to update with latest changes"
+              git push origin --delete $branchName
+            }
+
+            git checkout -b $branchName
 
             echo "settings.json has changed, committing and pushing"
             git add settings.json
             git commit -m "Update actionlint version to $latest"
-            git push  --set-upstream origin update-actionlint-$latest
+            git push --set-upstream origin $branchName
 
-            gh pr create --title "Update actionlint version to $latest" --body "Update actionlint version to $latest" --base main --head update-actionlint-$latest
+            # only create a PR if one doesn't already exist
+            $existingPR = gh pr list --head $branchName --json number --jq '.[0].number'
+            if (-not $existingPR) {
+              gh pr create --title "Update actionlint version to $latest" --body "Update actionlint version to $latest" --base main --head $branchName
+            }
+            else {
+              echo "PR #$existingPR already exists for branch $branchName and has been updated with the latest push"
+            }
           }
           else {
             echo "settings.json has not changed, no need to commit"
