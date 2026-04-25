@@ -60,3 +60,10 @@ jobs:
           VALIDATE_ALL_CODEBASE: true
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # workflow-with-errors.yml is an intentional test fixture for this action
+          VALIDATE_CHECKOV: false
+          VALIDATE_GITHUB_ACTIONS: false
+          # 0% JSCPD threshold is unrealistic for this repo
+          VALIDATE_JSCPD: false
+          # Too much noise from existing YAML style (line length, missing ---)
+          VALIDATE_YAML: false
