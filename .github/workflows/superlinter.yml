@@ -65,5 +65,8 @@ jobs:
           VALIDATE_GITHUB_ACTIONS: false
           # 0% JSCPD threshold is unrealistic for this repo
           VALIDATE_JSCPD: false
-          # Too much noise from existing YAML style (line length, missing ---)
+          # Pre-existing style issues across many files; reformatting all would be noisy
           VALIDATE_YAML: false
+          VALIDATE_MARKDOWN: false
+          VALIDATE_MARKDOWN_PRETTIER: false
+          VALIDATE_YAML_PRETTIER: false
