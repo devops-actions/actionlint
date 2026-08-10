@@ -71,7 +71,7 @@ runs:
           fi
       fi
       
-      echo $result>"actionlint-errors.json"
+      printf '%s\n' "$result" > "actionlint-errors.json"
       echo "resultsfile=actionlint-errors.json">>$GITHUB_OUTPUT
       
       if [[ $status == 0 ]];
