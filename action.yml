@@ -36,6 +36,7 @@ runs:
     env:
       FAILONERRORS: ${{ inputs.fail-on-errors }}
       SHELLCHECK_OPTS: ${{ inputs.shellcheck_opts }}
+      ACTIONLINT_VERSION: ${{ steps.getversion.outputs.actionLintVersion }}
     run: |
       # execute rhysd/actionlint as a docker container
 
@@ -44,8 +45,8 @@ runs:
 
       # matcher needed to annotate the PR with comments
       echo "::add-matcher::$GITHUB_ACTION_PATH/actionlint-matcher.json"
-      version=${{ steps.getversion.outputs.actionLintVersion }}
-      actionLintContainer=$version
+      version="$ACTIONLINT_VERSION"
+      actionLintContainer="$version"
 
       # check if version has a value
       if [[ -z "$version" ]]; then
