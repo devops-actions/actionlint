@@ -62,9 +62,11 @@ runs:
       else
           echo "Failed to parse JSON, or got false/null"
 
-          if [[ $result -ne 'no project was found in any parent directories of ".". check workflows directory is put correctly in your Git repository' ]]; then
+          # the "no project was found" message goes to stderr and is already
+          # visible in the log, so $result is empty in that case
+          if [[ -n "$result" && "$result" != *"no project was found in any parent directories"* ]]; then
             echo "Showing the resulting messages:"
-            echo $result
+            echo "$result"
             echo "-------------------------------"
           fi
       fi
