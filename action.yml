@@ -25,9 +25,9 @@ runs:
     id: getversion
     run: |
       # get actionlintversion from the settings.json file
-      actionLintVersion=$(jq -r '.actionlintversion' $GITHUB_ACTION_PATH/settings.json)
-      actionlintversiontag=$(jq -r '.actionlintversiontag' $GITHUB_ACTION_PATH/settings.json)
-      echo "actionLintVersion=$actionLintVersion">>$GITHUB_OUTPUT
+      actionLintVersion=$(jq -r '.actionlintversion' "$GITHUB_ACTION_PATH/settings.json")
+      actionlintversiontag=$(jq -r '.actionlintversiontag' "$GITHUB_ACTION_PATH/settings.json")
+      echo "actionLintVersion=$actionLintVersion" >> "$GITHUB_OUTPUT"
       echo "Found the version of rhysd/actionlint to use [$actionlintversiontag], with SHA [$actionLintVersion]"
 
   - name: Docker run rhysd/actionlint
@@ -55,7 +55,7 @@ runs:
       fi
       
       # run again to get a json result
-      result=$(docker run -v $GITHUB_WORKSPACE:/repo --workdir /repo -e SHELLCHECK_OPTS="${SHELLCHECK_OPTS}" $actionLintContainer -color -format "{{json .}}")
+      result=$(docker run -v "$GITHUB_WORKSPACE":/repo --workdir /repo -e SHELLCHECK_OPTS="${SHELLCHECK_OPTS}" "$actionLintContainer" -color -format "{{json .}}")
       status=$?
 
       if jq -e . >/dev/null 2>&1 <<<"$result"; then
@@ -73,7 +73,7 @@ runs:
       fi
       
       printf '%s\n' "$result" > "actionlint-errors.json"
-      echo "resultsfile=actionlint-errors.json">>$GITHUB_OUTPUT
+      echo "resultsfile=actionlint-errors.json" >> "$GITHUB_OUTPUT"
       
       if [[ $status == 0 ]];
       then
@@ -82,7 +82,7 @@ runs:
         echo "Actionlint found errors"
         if [[ $FAILONERRORS == "true" ]]; then
           echo "Running the docker container directly to show the errors"
-          docker run -v $GITHUB_WORKSPACE:/repo --workdir /repo -e SHELLCHECK_OPTS="${SHELLCHECK_OPTS}" $actionLintContainer -color   
+          docker run -v "$GITHUB_WORKSPACE":/repo --workdir /repo -e SHELLCHECK_OPTS="${SHELLCHECK_OPTS}" "$actionLintContainer" -color
         fi        
       fi
 
