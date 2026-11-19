@@ -1,0 +1,24 @@
+name: Release
+
+# Push a version tag (git tag v1.2.3 && git push origin v1.2.3) to publish a release.
+# The reusable workflow creates the GitHub release for the tag with the action files, a
+# source archive and SPDX/CycloneDX SBOMs attached, each with a verified artifact
+# attestation. To (re)run it for an existing tag, start it manually and pick the tag under
+# "Use workflow from".
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    name: Release with SBOM and attestations
+    permissions:
+      contents: write       # create the release and upload its assets
+      id-token: write       # Sigstore keyless signing for the attestations
+      attestations: write   # store the attestations
+    uses: devops-actions/.github/.github/workflows/rw-release-attestation.yml@b88953c2b5ba6cfc3048a7fb6d32dc78e1588c58 # main
