@@ -8,6 +8,10 @@ inputs:
     description: "Fail the action if errors are found"
     required: false
     default: "true"
+  profile:
+    description: "Rule profile to run: 'correctness' (the checks of actionlint, default), 'default' (adds security and policy rules) or 'pedantic'. Set to an empty string to use the profile from your .github/jactionlint.yaml config file"
+    required: false
+    default: "correctness"
   shellcheck_opts:
     description: "Custom SHELLCHECK_OPTS"
     required: false
@@ -20,36 +24,37 @@ outputs:
 runs:
   using: composite
   steps:
-  - name: Install actionlint
+  - name: Install jactionlint
     shell: bash
     id: install
     run: |
-      # download the actionlint binary that is pinned in settings.json and verify its checksum
+      # download the jactionlint binary that is pinned in settings.json and verify its checksum
       binary=$(bash "$GITHUB_ACTION_PATH/install-actionlint.sh")
       echo "binary=$binary" >> "$GITHUB_OUTPUT"
-      echo "Using actionlint binary [$binary]"
-      "$binary" -version
+      echo "Using jactionlint binary [$binary]"
+      "$binary" --version
 
-      # actionlint picks up shellcheck and pyflakes from the PATH and silently skips those checks when they are missing
+      # jactionlint picks up shellcheck and pyflakes from the PATH and skips those checks when they are missing
       for tool in shellcheck pyflakes; do
         if command -v "$tool" >/dev/null 2>&1; then
-          echo "Found [$tool] on the PATH, actionlint will use it"
+          echo "Found [$tool] on the PATH, jactionlint will use it"
         else
-          echo "::notice::[$tool] was not found on the PATH, actionlint skips the checks that need it"
+          echo "::notice::[$tool] was not found on the PATH, jactionlint skips the checks that need it"
         fi
       done
 
-  - name: Run actionlint
+  - name: Run jactionlint
     shell: bash
     id: run
     env:
       FAILONERRORS: ${{ inputs.fail-on-errors }}
       SHELLCHECK_OPTS: ${{ inputs.shellcheck_opts }}
+      PROFILE: ${{ inputs.profile }}
       ACTIONLINT_BINARY: ${{ steps.install.outputs.binary }}
     run: |
-      # execute actionlint from the downloaded binary
+      # execute jactionlint from the downloaded binary
 
-      # disable pipefail -e -o that is set on the shell script from the runner to prevent exiting when actionlint finds errors
+      # disable pipefail -e -o that is set on the shell script from the runner to prevent exiting when jactionlint finds errors
       set +e +o pipefail;
 
       # matcher needed to annotate the PR with comments
@@ -61,10 +66,20 @@ runs:
         exit 1
       fi
 
+      # the profile selects which rules run, an empty value leaves the choice to the config file in the repository
+      args=()
+      if [[ -n "$PROFILE" ]]; then
+        if [[ ! "$PROFILE" =~ ^(correctness|default|pedantic)$ ]]; then
+          echo "::error::Invalid profile [$PROFILE], expected one of: correctness, default, pedantic or an empty string"
+          exit 1
+        fi
+        args+=("--profile=$PROFILE")
+      fi
+
       cd "$GITHUB_WORKSPACE" || exit 1
 
       # run to get a json result
-      result=$("$ACTIONLINT_BINARY" -color -format "{{json .}}")
+      result=$("$ACTIONLINT_BINARY" "${args[@]}" --color=always --format "{{json .}}")
       status=$?
 
       if jq -e . >/dev/null 2>&1 <<<"$result"; then
@@ -91,7 +106,7 @@ runs:
         echo "Actionlint found errors"
         if [[ $FAILONERRORS == "true" ]]; then
           echo "Running actionlint again to show the errors"
-          "$ACTIONLINT_BINARY" -color
+          "$ACTIONLINT_BINARY" "${args[@]}" --color=always
         fi        
       fi
 

@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-# install-actionlint.sh: download the actionlint release binary that is pinned in
+# install-actionlint.sh: download the linter release binary (jactionlint) that is pinned in
 # settings.json, verify its SHA256 checksum and print the path of the executable.
 #
 # Reads:  RUNNER_OS, RUNNER_ARCH, RUNNER_TEMP (set by the GitHub Actions runner)
-# Writes: the path of the actionlint executable on stdout, all logging on stderr
+# Writes: the path of the linter executable on stdout, all logging on stderr
 
 set -euo pipefail
 
@@ -25,15 +25,17 @@ command -v jq >/dev/null 2>&1 || die "jq is required to run this action"
 command -v curl >/dev/null 2>&1 || die "curl is required to run this action"
 
 repo=$(jq -r '.actionlintrepo // empty' "$settings")
+name=$(jq -r '.actionlintname // empty' "$settings")
 version=$(jq -r '.actionlintversiontag // empty' "$settings")
 
 [[ -n "$repo" ]] || die "actionlintrepo is empty in settings.json, cannot continue"
+[[ -n "$name" ]] || die "actionlintname is empty in settings.json, cannot continue"
 [[ -n "$version" ]] || die "actionlintversiontag is empty in settings.json, cannot continue"
 
 case "${RUNNER_OS:-}" in
-  Linux) os="linux"; ext="tar.gz"; exe="actionlint" ;;
-  macOS) os="darwin"; ext="tar.gz"; exe="actionlint" ;;
-  Windows) os="windows"; ext="zip"; exe="actionlint.exe" ;;
+  Linux) os="linux"; ext="tar.gz"; exe="$name" ;;
+  macOS) os="darwin"; ext="tar.gz"; exe="$name" ;;
+  Windows) os="windows"; ext="zip"; exe="$name.exe" ;;
   *) die "Unsupported runner OS [${RUNNER_OS:-}]" ;;
 esac
 
@@ -49,9 +51,9 @@ platform="${os}_${arch}"
 expected=$(jq -r --arg p "$platform" '.checksums[$p] // empty' "$settings")
 [[ -n "$expected" ]] || die "No pinned checksum for platform [$platform] in settings.json, this platform is not supported"
 
-asset="actionlint_${version}_${platform}.${ext}"
+asset="${name}_${version}_${platform}.${ext}"
 url="https://github.com/${repo}/releases/download/v${version}/${asset}"
-installdir="${RUNNER_TEMP:?RUNNER_TEMP is not set}/actionlint-${version}-${platform}"
+installdir="${RUNNER_TEMP:?RUNNER_TEMP is not set}/${name}-${version}-${platform}"
 binary="$installdir/$exe"
 
 sha256() {
