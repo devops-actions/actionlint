@@ -1,4 +1,4 @@
-name: Rhysd actionlint
+name: Lint GitHub Actions workflows
 description: Check your workflows for common errors, like not declaring outputs before using them, bash script errors, and more!
 branding:
   icon: tag
