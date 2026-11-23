@@ -39,7 +39,7 @@ jobs:
     - uses: actions/checkout@v4 # v4
 
     # run the actionlinter, will fail on errors
-    - uses: devops-actions/actionlint@e7ee33fbf5aa8c9f9ee1145137f3e52e25d6a35b #v0.1.3
+    - uses: devops-actions/actionlint@e1fc6682e5b50fbddb842abc762ea365e6fe3388 # v2.0.0
 ```
 
 ## Usage with results file:
@@ -59,7 +59,7 @@ jobs:
     steps:       
     - uses: actions/checkout@v4
 
-    - uses: devops-actions/actionlint@e7ee33fbf5aa8c9f9ee1145137f3e52e25d6a35b #v0.1.3
+    - uses: devops-actions/actionlint@e1fc6682e5b50fbddb842abc762ea365e6fe3388 # v2.0.0
       continue-on-error: true
       id: action-lint
     
@@ -79,7 +79,7 @@ The `profile` input selects which rules run:
 | `pedantic` | `default` plus the noisy and opinionated rules |
 
 ``` yaml
-    - uses: devops-actions/actionlint@v2
+    - uses: devops-actions/actionlint@e1fc6682e5b50fbddb842abc762ea365e6fe3388 # v2.0.0
       with:
         profile: default
 ```
@@ -116,7 +116,7 @@ Another option is to pass in extra `shellcheck_opts` for the warnings you want t
   steps:       
     - uses: actions/checkout@v4
 
-    - uses: devops-actions/actionlint@e7ee33fbf5aa8c9f9ee1145137f3e52e25d6a35b #v0.1.3
+    - uses: devops-actions/actionlint@e1fc6682e5b50fbddb842abc762ea365e6fe3388 # v2.0.0
       continue-on-error: true
       id: action-lint
       with:
