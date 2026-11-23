@@ -37,6 +37,7 @@ jobs:
           # read the current settings: they hold the repository we download the actionlint binaries from
           $currentSettings = Get-Content -Path settings.json | ConvertFrom-Json
           $repo = $currentSettings.actionlintrepo
+          $name = $currentSettings.actionlintname
 
           # get the latest version of actionlint from the github releases in that repo
           $headers = @{ Authorization = "Bearer $($env:GH_TOKEN)" }
@@ -46,7 +47,7 @@ jobs:
           Write-Host "Found the lastest version of $($repo):$latest"
 
           # download the checksums file of that release: it lists the SHA256 hash of each platform archive
-          $checksumLines = gh release download "v$latest" --repo $repo --pattern "actionlint_$($latest)_checksums.txt" --output -
+          $checksumLines = gh release download "v$latest" --repo $repo --pattern "$($name)_$($latest)_checksums.txt" --output -
           if ($LASTEXITCODE -ne 0) {
             Write-Host "Failed to download the checksums file for [$repo] version [$latest], cannot continue"
             exit 1
@@ -56,7 +57,7 @@ jobs:
           $checksums = [ordered]@{}
           $found = @{}
           foreach ($line in $checksumLines) {
-            if ($line.Trim() -match "^([0-9a-f]{64})\s+actionlint_$([regex]::Escape($latest))_([a-z0-9]+_[a-z0-9]+)\.(tar\.gz|zip)$") {
+            if ($line.Trim() -match "^([0-9a-f]{64})\s+$([regex]::Escape($name))_$([regex]::Escape($latest))_([a-z0-9]+_[a-z0-9]+)\.(tar\.gz|zip)$") {
               $found[$Matches[2]] = $Matches[1]
             }
           }
@@ -83,6 +84,7 @@ jobs:
           # write the info to the settings.json file using an ordered hashtable to keep key order stable
           $settings = [ordered]@{
             actionlintrepo = $repo
+            actionlintname = $name
             actionlintversiontag = $latest
             checksums = $checksums
           }

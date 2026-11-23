@@ -1,23 +1,25 @@
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/devops-actions/actionlint/badge)](https://api.securityscorecards.dev/projects/github.com/devops-actions/actionlint)
 
 # actionlint
-Action wrapper for [rhysd/actionlint](https://github.com/rhysd/actionlint) to make using it easier (using an action with automatic version updates instead of manual link + manual update process).
+Action wrapper that lints your GitHub Actions workflows the easy way: one `uses:` line, with automatic and checksum-pinned version updates of the linter.
+
+Since v2 this action runs [jdx/jactionlint](https://github.com/jdx/jactionlint), an actively maintained fork of [rhysd/actionlint](https://github.com/rhysd/actionlint). It covers the checks of actionlint and adds support for newer GitHub Actions features such as parallel steps, the `$/` self-repository `uses:` syntax and the Actions lock file. See [Coming from v1](#coming-from-v1) for what changed.
 
 This action will run your repository through actionlint and detect common errors like:
 - Calling an `output` or `needs` object that has not been defined: also prevents typos
 - Run shell check on all `run` commands
-- And more, check the [actionlint documentation](https://github.com/rhysd/actionlint) for more information
+- And more, check the [jactionlint documentation](https://jactionlint.jdx.dev) for more information
 
 > [!NOTE]
 > Actionlint does _not_ check for external output, like usage of ${{ input.name }} into the shell commands. The reasoning is that to be able to inject something, you need to have **write** access to the repo (inputs come either from workflow files or workflow_dispatch events).
 
 > [!NOTE]
-> Actionlint unfortunately does **not** support (composite) action definition files.
+> Composite action definition files (`action.yml`) and `.github/dependabot.yml` are checked as well.
 
 ## How it runs
-The action downloads the pinned actionlint release binary for the runner's OS and architecture, verifies its SHA256 checksum against the value stored in [settings.json](settings.json) and runs it directly: no Docker needed. It works on Linux, macOS and Windows runners and needs `bash`, `curl` and `jq` on the runner (all present on GitHub-hosted runners).
+The action downloads the pinned jactionlint release binary for the runner's OS and architecture, verifies its SHA256 checksum against the value stored in [settings.json](settings.json) and runs it directly: no Docker needed. It works on Linux, macOS and Windows runners and needs `bash`, `curl` and `jq` on the runner (all present on GitHub-hosted runners).
 
-actionlint uses [shellcheck](https://github.com/koalaman/shellcheck) and [pyflakes](https://github.com/PyCQA/pyflakes) to check `run:` scripts when it finds them on the `PATH`, and skips those checks otherwise (the action logs a notice when a tool is missing). GitHub-hosted Ubuntu runners ship with shellcheck. Install pyflakes first (`pip install pyflakes`) if you want Python scripts checked.
+jactionlint uses [shellcheck](https://github.com/koalaman/shellcheck) and [pyflakes](https://github.com/PyCQA/pyflakes) to check `run:` scripts when it finds them on the `PATH`, and skips those checks otherwise (the action logs a notice when a tool is missing). GitHub-hosted Ubuntu runners ship with shellcheck. Install pyflakes first (`pip install pyflakes`) if you want Python scripts checked.
 
 ## Results
 If there are no errors from actionlint, this action will succeed. If there are errors, this action will fail and output the errors in the logs.
@@ -66,6 +68,34 @@ jobs:
         name: actionlint-results
         path: ${{ steps.action-lint.outputs.results-file }}
 ```
+
+## Profiles
+The `profile` input selects which rules run:
+
+| Profile | What it checks |
+| --- | --- |
+| `correctness` (default) | The checks of actionlint (syntax, expressions, `needs` and outputs, shellcheck and more) plus extra bug detectors |
+| `default` | `correctness` plus security and policy rules, such as unpinned actions, missing `permissions`, missing timeouts and dangerous triggers |
+| `pedantic` | `default` plus the noisy and opinionated rules |
+
+``` yaml
+    - uses: devops-actions/actionlint@v2
+      with:
+        profile: default
+```
+
+Set `profile: ''` to use the profile from a `.github/jactionlint.yaml` config file in your repository instead. See the [rule list](https://jactionlint.jdx.dev/rules) for every rule and the profile it belongs to.
+
+## Coming from v1
+v1 ran rhysd/actionlint, v2 runs jactionlint with the `correctness` profile to stay close to that behavior. Differences to expect:
+- Some new findings: jactionlint has checks that actionlint does not have, and it also checks composite actions and `dependabot.yml`
+- Some findings disappear: newer syntax that actionlint rejected (for example parallel steps) is accepted
+- Some messages are reworded, and the label at the end of a finding in the log is the rule ID. The results file keeps the `kind` field and adds fields such as `id` (the rule ID) and `severity`
+- Findings in expressions and scripts point at the exact line and column of the problem, where actionlint pointed at the `run:` key of the step
+- Only workflow files directly in `.github/workflows` are checked, not those in subdirectories
+- An existing `.github/actionlint.yaml` config file keeps working
+
+The full comparison is in the [jactionlint documentation](https://jactionlint.jdx.dev/actionlint).
 
 # Errors
 
