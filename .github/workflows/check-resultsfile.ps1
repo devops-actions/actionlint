@@ -33,14 +33,14 @@ foreach ($item in $items) {
         }
     }
 
-    if ($item.filepath -eq '.github/workflows/workflow-with-errors.yml' -and $item.line -eq 25) {
+    if ($item.filepath -eq '.github/workflows/workflow-with-errors.yml' -and $item.line -eq 27) {
         Write-Host "Found second file path and line number"
         if ($item.message -eq "property ""test-local-action"" is not defined in object type {}") { 
             $found2 = $true
         }
     }
 
-    if ($item.filepath -eq '.github/workflows/workflow-with-errors.yml' -and $item.line -eq 31) {
+    if ($item.filepath -eq '.github/workflows/workflow-with-errors.yml' -and $item.line -eq 33) {
         Write-Host "Found third file path and line number"
         if ($item.message -eq "property ""test-job"" is not defined in object type {}"){
             $found3 = $true

@@ -91,6 +91,7 @@ v1 ran rhysd/actionlint, v2 runs jactionlint with the `correctness` profile to s
 - Some new findings: jactionlint has checks that actionlint does not have, and it also checks composite actions and `dependabot.yml`
 - Some findings disappear: newer syntax that actionlint rejected (for example parallel steps) is accepted
 - Some messages are reworded, and the label at the end of a finding in the log is the rule ID. The results file keeps the `kind` field and adds fields such as `id` (the rule ID) and `severity`
+- Findings in expressions and scripts point at the exact line and column of the problem, where actionlint pointed at the `run:` key of the step
 - Only workflow files directly in `.github/workflows` are checked, not those in subdirectories
 - An existing `.github/actionlint.yaml` config file keeps working
 
