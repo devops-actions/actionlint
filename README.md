@@ -14,6 +14,11 @@ This action will run your repository through actionlint and detect common errors
 > [!NOTE]
 > Actionlint unfortunately does **not** support (composite) action definition files.
 
+## How it runs
+The action downloads the pinned actionlint release binary for the runner's OS and architecture, verifies its SHA256 checksum against the value stored in [settings.json](settings.json) and runs it directly: no Docker needed. It works on Linux, macOS and Windows runners and needs `bash`, `curl` and `jq` on the runner (all present on GitHub-hosted runners).
+
+actionlint uses [shellcheck](https://github.com/koalaman/shellcheck) and [pyflakes](https://github.com/PyCQA/pyflakes) to check `run:` scripts when it finds them on the `PATH`, and skips those checks otherwise (the action logs a notice when a tool is missing). GitHub-hosted Ubuntu runners ship with shellcheck. Install pyflakes first (`pip install pyflakes`) if you want Python scripts checked.
+
 ## Results
 If there are no errors from actionlint, this action will succeed. If there are errors, this action will fail and output the errors in the logs.
 

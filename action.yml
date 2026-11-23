@@ -20,42 +20,51 @@ outputs:
 runs:
   using: composite
   steps:
-  - name: Get current rhysd/actionlint version
+  - name: Install actionlint
     shell: bash
-    id: getversion
+    id: install
     run: |
-      # get actionlintversion from the settings.json file
-      actionLintVersion=$(jq -r '.actionlintversion' "$GITHUB_ACTION_PATH/settings.json")
-      actionlintversiontag=$(jq -r '.actionlintversiontag' "$GITHUB_ACTION_PATH/settings.json")
-      echo "actionLintVersion=$actionLintVersion" >> "$GITHUB_OUTPUT"
-      echo "Found the version of rhysd/actionlint to use [$actionlintversiontag], with SHA [$actionLintVersion]"
+      # download the actionlint binary that is pinned in settings.json and verify its checksum
+      binary=$(bash "$GITHUB_ACTION_PATH/install-actionlint.sh")
+      echo "binary=$binary" >> "$GITHUB_OUTPUT"
+      echo "Using actionlint binary [$binary]"
+      "$binary" -version
 
-  - name: Docker run rhysd/actionlint
+      # actionlint picks up shellcheck and pyflakes from the PATH and silently skips those checks when they are missing
+      for tool in shellcheck pyflakes; do
+        if command -v "$tool" >/dev/null 2>&1; then
+          echo "Found [$tool] on the PATH, actionlint will use it"
+        else
+          echo "::notice::[$tool] was not found on the PATH, actionlint skips the checks that need it"
+        fi
+      done
+
+  - name: Run actionlint
     shell: bash
     id: run
     env:
       FAILONERRORS: ${{ inputs.fail-on-errors }}
       SHELLCHECK_OPTS: ${{ inputs.shellcheck_opts }}
-      ACTIONLINT_VERSION: ${{ steps.getversion.outputs.actionLintVersion }}
+      ACTIONLINT_BINARY: ${{ steps.install.outputs.binary }}
     run: |
-      # execute rhysd/actionlint as a docker container
+      # execute actionlint from the downloaded binary
 
-      # disable pipefail -e -o that is set on the shell script from the runner to prevent exiting when the docker run command fails
+      # disable pipefail -e -o that is set on the shell script from the runner to prevent exiting when actionlint finds errors
       set +e +o pipefail;
 
       # matcher needed to annotate the PR with comments
       echo "::add-matcher::$GITHUB_ACTION_PATH/actionlint-matcher.json"
-      version="$ACTIONLINT_VERSION"
-      actionLintContainer="$version"
 
-      # check if version has a value
-      if [[ -z "$version" ]]; then
-        echo "ActionLint version to use is empty, cannot continue"
+      # check if the binary is available
+      if [[ -z "$ACTIONLINT_BINARY" || ! -f "$ACTIONLINT_BINARY" ]]; then
+        echo "ActionLint binary [$ACTIONLINT_BINARY] not found, cannot continue"
         exit 1
       fi
-      
-      # run again to get a json result
-      result=$(docker run -v "$GITHUB_WORKSPACE":/repo --workdir /repo -e SHELLCHECK_OPTS="${SHELLCHECK_OPTS}" "$actionLintContainer" -color -format "{{json .}}")
+
+      cd "$GITHUB_WORKSPACE" || exit 1
+
+      # run to get a json result
+      result=$("$ACTIONLINT_BINARY" -color -format "{{json .}}")
       status=$?
 
       if jq -e . >/dev/null 2>&1 <<<"$result"; then
@@ -81,8 +90,8 @@ runs:
       else
         echo "Actionlint found errors"
         if [[ $FAILONERRORS == "true" ]]; then
-          echo "Running the docker container directly to show the errors"
-          docker run -v "$GITHUB_WORKSPACE":/repo --workdir /repo -e SHELLCHECK_OPTS="${SHELLCHECK_OPTS}" "$actionLintContainer" -color
+          echo "Running actionlint again to show the errors"
+          "$ACTIONLINT_BINARY" -color
         fi        
       fi
 

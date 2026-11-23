@@ -1,4 +1,4 @@
-name: Update the rhysd/actionlint reference
+name: Update the actionlint reference
 on:
   push:
     paths:
@@ -31,39 +31,60 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          # get the latest version of rhysd/actionlint from the github releases in that repo
-          $latest=(Invoke-RestMethod -Uri https://api.github.com/repos/rhysd/actionlint/releases/latest).tag_name
-          # remove the v from the version number
-          $latest=$latest.Substring(1)
-          Write-Host "Found the lastest version of rhysd/actionlint:$latest"
-
-          # pull so we have the info locally
-          docker pull rhysd/actionlint:$latest
-
-          # find the info we need
-          $digest=(docker image inspect rhysd/actionlint:$latest | ConvertFrom-Json).RepoDigests[-1]
-
-          # show the version information
-          Write-Host "Found the lastest version of rhysd/actionlint as SHA hash [$digest]"
-
           echo "GITHUB_WORKSPACE=[$($env:GITHUB_WORKSPACE)]"
           cd $env:GITHUB_WORKSPACE
 
-          # read the current settings to compare values (not just file diff)
+          # read the current settings: they hold the repository we download the actionlint binaries from
           $currentSettings = Get-Content -Path settings.json | ConvertFrom-Json
-          Write-Host "Current version: [$($currentSettings.actionlintversiontag)], new version: [$latest]"
-          Write-Host "Current digest:  [$($currentSettings.actionlintversion)], new digest:  [$digest]"
+          $repo = $currentSettings.actionlintrepo
 
-          # only update if the actual version values have changed
-          if ($currentSettings.actionlintversiontag -eq $latest -and $currentSettings.actionlintversion -eq $digest) {
+          # get the latest version of actionlint from the github releases in that repo
+          $headers = @{ Authorization = "Bearer $($env:GH_TOKEN)" }
+          $latest=(Invoke-RestMethod -Uri "https://api.github.com/repos/$repo/releases/latest" -Headers $headers).tag_name
+          # remove the v from the version number
+          $latest=$latest.Substring(1)
+          Write-Host "Found the lastest version of $($repo):$latest"
+
+          # download the checksums file of that release: it lists the SHA256 hash of each platform archive
+          $checksumLines = gh release download "v$latest" --repo $repo --pattern "actionlint_$($latest)_checksums.txt" --output -
+          if ($LASTEXITCODE -ne 0) {
+            Write-Host "Failed to download the checksums file for [$repo] version [$latest], cannot continue"
+            exit 1
+          }
+
+          # build a sorted "<os>_<arch>" = "<sha256>" map to pin in settings.json
+          $checksums = [ordered]@{}
+          $found = @{}
+          foreach ($line in $checksumLines) {
+            if ($line.Trim() -match "^([0-9a-f]{64})\s+actionlint_$([regex]::Escape($latest))_([a-z0-9]+_[a-z0-9]+)\.(tar\.gz|zip)$") {
+              $found[$Matches[2]] = $Matches[1]
+            }
+          }
+          foreach ($platform in ($found.Keys | Sort-Object)) {
+            $checksums[$platform] = $found[$platform]
+          }
+
+          if ($checksums.Count -eq 0) {
+            Write-Host "No checksums found in the checksums file of version [$latest], cannot continue"
+            exit 1
+          }
+          Write-Host "Found checksums for [$($checksums.Count)] platforms"
+
+          Write-Host "Current version: [$($currentSettings.actionlintversiontag)], new version: [$latest]"
+
+          # only update if the actual values have changed
+          $currentChecksums = $currentSettings.checksums | ConvertTo-Json -Compress
+          $newChecksums = [pscustomobject]$checksums | ConvertTo-Json -Compress
+          if ($currentSettings.actionlintversiontag -eq $latest -and $currentChecksums -eq $newChecksums) {
             echo "settings.json values have not changed, no need to create a PR"
             exit 0
           }
 
           # write the info to the settings.json file using an ordered hashtable to keep key order stable
           $settings = [ordered]@{
-            actionlintversion = $digest
+            actionlintrepo = $repo
             actionlintversiontag = $latest
+            checksums = $checksums
           }
 
           $settings | ConvertTo-Json | Out-File -FilePath settings.json -Encoding utf8
