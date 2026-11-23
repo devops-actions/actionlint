@@ -26,21 +26,21 @@ foreach ($item in $items) {
     Write-Host "Filepath:" $item.filepath
     Write-Host "Line:" $item.line
 
-    if ($item.filepath -eq '.github/workflows/workflow-with-errors.yml' -and $item.line -eq 6) {
+    if ($item.filepath -eq '.github/workflows/workflow-with-errors.yml' -and $item.line -eq 14) {
         Write-Host "Found first file path and line number"
         if ($item.message -eq "job ""job-with-errors"" needs job ""test-local-action"" which does not exist in this workflow") { 
             $found1 = $true
         }
     }
 
-    if ($item.filepath -eq '.github/workflows/workflow-with-errors.yml' -and $item.line -eq 12) {
+    if ($item.filepath -eq '.github/workflows/workflow-with-errors.yml' -and $item.line -eq 25) {
         Write-Host "Found second file path and line number"
         if ($item.message -eq "property ""test-local-action"" is not defined in object type {}") { 
             $found2 = $true
         }
     }
 
-    if ($item.filepath -eq '.github/workflows/workflow-with-errors.yml' -and $item.line -eq 18) {
+    if ($item.filepath -eq '.github/workflows/workflow-with-errors.yml' -and $item.line -eq 31) {
         Write-Host "Found third file path and line number"
         if ($item.message -eq "property ""test-job"" is not defined in object type {}"){
             $found3 = $true
@@ -79,7 +79,7 @@ else {
 }
 
 if (!$found1 -or !$found2 -or !$found3 -or $items.Length -gt 3){
-    return 1
+    exit 1
 }
 
-return 0
+exit 0
